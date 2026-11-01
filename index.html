@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoreEra Control | Console preview</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1F3A'/%3E%3Cpath d='M46 18 A20 20 0 1 0 46 46' fill='none' stroke='white' stroke-width='7' stroke-linecap='round'/%3E%3Crect x='26' y='28' width='14' height='8' rx='4' fill='%231D6FE0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1F3A;--blue:#1D6FE0;--sky:#38C6F4;--bg:#F4F6FA;--line:#E1E6EE;--soft:#EEF1F5;--slate:#5B6474;--ok:#137A52;--okbg:#E3F6EE;--warn:#8A5A0B;--warnbg:#FDF1DC;--bad:#B4361D;--card:#fff;--text:#0B1F3A;--tint:#EEF3FC;--hover:#F7F9FC;--infobg:#E6EFFD;--info:#1556B5;--map:#E9EFF7}
+html[data-theme=dark]{--bg:#071226;--card:#0E1E38;--line:#1E3354;--soft:#17294A;--text:#E6EDF7;--slate:#9FB0C8;--tint:#16315C;--hover:#122746;--okbg:rgba(34,176,125,.16);--ok:#5FD6A8;--warnbg:rgba(232,162,58,.16);--warn:#F2C27A;--bad:#FF8A70;--infobg:rgba(91,155,255,.16);--info:#9CC2FF;--map:#10264A;--navy:#0A1830;color-scheme:dark}
+html[data-theme=dark] .side,html[data-theme=dark] .lside,html[data-theme=dark] .wiz .wl{background:#050E1F}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+html[lang=ar] body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
+a{color:var(--blue)}
+button,input,select{font:inherit}
+.disp{font-family:'Space Grotesk',sans-serif}
+html[lang=ar] .disp,html[lang=ar] h1,html[lang=ar] h2{font-family:'IBM Plex Sans Arabic',sans-serif}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* login */
+.login{min-height:100vh;display:flex;flex-wrap:wrap}
+.lside{flex:1 1 420px;background:var(--navy);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;gap:40px}
+.lside:before{content:"";position:absolute;width:600px;height:600px;inset-inline-end:-200px;bottom:-200px;background:radial-gradient(circle,rgba(29,111,224,.5),transparent 65%);filter:blur(30px)}
+.lside:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px}
+.lside>*{position:relative;z-index:1}
+.lside h1{font:700 clamp(32px,4vw,48px)/1.15 'Space Grotesk',sans-serif;margin:0 0 14px;letter-spacing:-.02em}
+html[lang=ar] .lside h1{letter-spacing:0}
+.lside p{color:#A9B8CE;max-width:440px;margin:0}
+.feat{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.feat span{font-size:13px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#D5DFEE}
+.lform{flex:1 1 420px;display:flex;align-items:center;justify-content:center;padding:48px 24px;position:relative}
+.lbox{width:100%;max-width:400px;display:flex;flex-direction:column;gap:16px}
+.lbox h2{margin:0;font:700 26px 'Space Grotesk',sans-serif}
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--slate)}
+.field input,.field select{height:46px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font-size:15px;color:var(--text);background:var(--card);width:100%}
+.field input:focus,.field select:focus{outline:2px solid var(--blue);outline-offset:1px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:#C3CCDA}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.pri:hover{background:#1863cc}
+.btn.full{width:100%;height:48px;font-size:15px}
+.btn.danger{color:var(--bad);border-color:#F2C9C0}
+.btn.sm{height:34px;padding:0 12px;font-size:13px;border-radius:8px}
+.btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.25)}
+.langbtn{position:absolute;top:20px;inset-inline-end:24px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font:600 14px 'IBM Plex Sans Arabic',Inter,sans-serif;cursor:pointer;color:var(--text)}
+
+/* app */
+.app{min-height:100vh;display:flex;flex-wrap:wrap}
+.side{flex:1 1 240px;background:var(--navy);padding:22px 14px;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:#fff;font:700 17px 'Space Grotesk',sans-serif}
+.brand em{font-style:normal;font-weight:400;color:#5B9BFF}
+.cmdk{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;margin:0 2px 14px;padding:0 12px;height:40px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#8DA1C0;font-size:13px;cursor:pointer}
+.cmdk:hover{background:rgba(255,255,255,.1)}
+.cmdk span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmdk kbd{white-space:nowrap;margin-inline-start:auto;font:600 11px Inter,sans-serif;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.1);color:#C3D0E3}
+.gl{padding:14px 12px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6F83A3}
+html[lang=ar] .gl{letter-spacing:0}
+.nav{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14px;color:#A9B8CE;cursor:pointer}
+.nav:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav.on{background:rgba(29,111,224,.25);color:#fff}
+.nav:focus-visible,.cmdk:focus-visible{outline:2px solid #5B9BFF}
+.nav svg{width:18px;height:18px;flex:none}
+.nav .cnt{margin-inline-start:auto;font-size:11px;font-weight:700;background:#D2452B;color:#fff;border-radius:999px;padding:1px 7px}
+.me{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:auto;padding:14px 6px 0;border-top:1px solid rgba(255,255,255,.08);color:#fff;font-size:13px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:600;flex:none;color:#fff}
+.me small{display:block;color:#8DA1C0;font-size:12px}
+.mini{all:unset;color:#8DA1C0;cursor:pointer;font-size:12px;white-space:nowrap;padding:4px 6px;border-radius:6px}
+.mini:hover{color:#fff;background:rgba(255,255,255,.08)}
+.main{flex:999 1 560px;min-width:0;padding:28px 36px 90px;display:flex;flex-direction:column;gap:20px}
+.head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.head h1{margin:0;font:700 28px 'Space Grotesk',sans-serif}
+.sub{font-size:14px;color:var(--slate)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.nw{flex-wrap:nowrap}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 14px;height:44px;flex:1 1 260px;color:var(--slate)}
+.search input{border:0;outline:none;background:transparent;flex:1;font-size:14px;color:var(--text);min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.g2>*,.g3>*,.g4>*{min-width:0}
+.span2{grid-column:span 2}
+.pad{padding:20px}
+.card h2,.dark h2{margin:0 0 12px;font-size:16px}
+.kpi span{font-size:13px;color:var(--slate)}
+.kpi b{display:block;font:700 30px 'Space Grotesk',sans-serif;margin:4px 0}
+.kpi i{font-style:normal;font-size:12px;font-weight:600}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.c-ok{background:var(--okbg);color:var(--ok)}.c-warn{background:var(--warnbg);color:var(--warn)}.c-off{background:var(--soft);color:#4A5568}.c-info{background:var(--infobg);color:var(--info)}
+.bar{height:6px;border-radius:6px;background:var(--soft);overflow:hidden;flex:1}
+.bar i{display:block;height:100%;border-radius:6px}
+.tbl{overflow-x:auto}
+.tr{display:grid;gap:12px;align-items:center;padding:12px 20px;border-bottom:1px solid var(--soft);font-size:14px}
+.th{font-size:12px;color:var(--slate);text-transform:uppercase;letter-spacing:.04em;padding-top:14px;padding-bottom:14px}
+html[lang=ar] .th{letter-spacing:0}
+.tr.link{cursor:pointer}.tr.link:hover{background:var(--hover)}.tr.sel{background:var(--tint)}
+.cb{all:unset;width:18px;height:18px;border:1.5px solid #C3CCDA;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;background:var(--card)}
+.cb[aria-checked=true]{background:var(--blue);border-color:var(--blue)}
+.cb:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.pill{height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:13px;font-weight:500;cursor:pointer}
+.pill.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;margin-top:6px}
+.list>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--soft);font-size:14px}
+.list>div:last-child{border-bottom:0}
+.muted{color:var(--slate)}
+.ic{width:34px;height:34px;border-radius:9px;background:var(--tint);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none}
+.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;background:var(--navy);color:#fff;font-size:14px;font-weight:500;box-shadow:0 20px 40px rgba(11,31,58,.3);animation:up .35s cubic-bezier(.16,1,.3,1)}
+.toast i{width:22px;height:22px;border-radius:50%;background:#22B07D;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+@keyframes up{from{opacity:0;transform:translate(-50%,12px)}}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{height:44px;padding:0 14px;border:0;background:transparent;font-size:14px;font-weight:600;color:var(--slate);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.dark{background:var(--navy);color:#fff;border-radius:16px}
+.sw{flex:none;width:46px;height:26px;border-radius:999px;border:0;background:#C3CCDA;position:relative;cursor:pointer}
+.sw:after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:inset-inline-start .2s}
+.sw[aria-pressed=true]{background:var(--blue)}.sw[aria-pressed=true]:after{inset-inline-start:23px}
+.opt{text-align:start;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:14px;cursor:pointer;color:var(--text);display:flex;flex-direction:column;gap:4px}
+.opt.on{border-color:var(--blue);background:var(--tint)}
+.opt b{font-size:14px}.opt span{font-size:12px;color:var(--slate)}
+.phone{border-radius:26px;border:7px solid #1B3358;padding:16px 12px}
+.demo{position:fixed;bottom:16px;inset-inline-end:16px;background:var(--navy);color:#fff;font-size:12px;padding:8px 12px;border-radius:999px;opacity:.85;z-index:40}
+.alert{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--soft)}
+.alert:last-child{border-bottom:0}
+.alert .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.check{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14px}
+.check .ck{width:24px;height:24px;border-radius:50%;border:2px solid #C3CCDA;display:flex;align-items:center;justify-content:center;flex:none;font-size:12px;color:#fff}
+.check.done .ck{background:#22B07D;border-color:#22B07D}
+.check.done span:last-child{color:var(--slate);text-decoration:line-through}
+
+/* bulk bar */
+.bulk{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;background:var(--navy);color:#fff;padding:10px 12px;border-radius:16px;box-shadow:0 20px 50px rgba(11,31,58,.35);max-width:calc(100% - 32px);animation:up .35s cubic-bezier(.16,1,.3,1)}
+.bulk b{padding:0 10px;font-size:14px}
+.bulk .btn{height:38px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:#fff;font-size:13px}
+.bulk .btn:hover{background:rgba(255,255,255,.16)}
+.bulk select{height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#12305A;color:#fff;padding:0 10px;font-size:13px}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:90;background:rgba(5,14,31,.55);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;padding:10vh 16px 16px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.pal{width:100%;max-width:620px;background:var(--card);color:var(--text);border-radius:18px;box-shadow:0 40px 80px rgba(0,0,0,.35);overflow:hidden}
+.pal .in{display:flex;align-items:center;gap:10px;padding:0 18px;height:60px;border-bottom:1px solid var(--line);color:var(--slate)}
+.pal input{flex:1;border:0;outline:none;font-size:17px;color:var(--text);background:transparent;min-width:0}
+.pal ul{list-style:none;margin:0;padding:8px;max-height:52vh;overflow:auto}
+.pal li button{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;font-size:14px;cursor:pointer}
+.pal li button:hover,.pal li button.act{background:var(--tint)}
+.pal li small{margin-inline-start:auto;color:var(--slate);font-size:12px}
+.pal .grp{padding:10px 12px 4px;font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.06em}
+.wiz{width:100%;max-width:720px;background:var(--card);color:var(--text);border-radius:20px;box-shadow:0 40px 80px rgba(0,0,0,.35);overflow:hidden;display:flex;flex-wrap:wrap}
+.wiz .wl{flex:1 1 220px;background:var(--navy);color:#fff;padding:28px 24px;display:flex;flex-direction:column;gap:6px}
+.wiz .wr{flex:999 1 340px;padding:28px;display:flex;flex-direction:column;gap:16px;min-height:420px}
+.ws{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14px;color:#8DA1C0}
+.ws .n{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none}
+.ws.on{color:#fff}.ws.on .n{background:var(--blue);border-color:var(--blue)}
+.ws.done .n{background:#22B07D;border-color:#22B07D;color:#fff}
+.prog{height:6px;border-radius:6px;background:var(--soft);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--blue);transition:width .4s}
+
+@media (max-width:1000px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr}.span2{grid-column:auto}}
+@media (max-width:640px){.main{padding:20px 16px 110px}.g4,.g2{grid-template-columns:1fr}.lside{padding:32px 24px}.side{flex-direction:row;flex-wrap:wrap}.brand{width:100%;padding-bottom:10px}.cmdk{width:100%}.me{width:100%}.wiz .wl{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<section id="login" class="login"></section>
+<section id="app" class="app hidden">
+  <aside class="side" id="side" aria-label="Main menu"></aside>
+  <main class="main" id="view" tabindex="-1"></main>
+</section>
+<div id="layer"></div>
+<div id="toastbox" aria-live="polite"></div>
+<div class="demo" id="demo" aria-hidden="true"></div>
+
+<script>
+(function(){
+var $=function(s,r){return(r||document).querySelector(s)};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var LANG='en';try{var sl=localStorage.getItem('ce-lang');if(sl==='ar'||sl==='en')LANG=sl}catch(e){}
+var THEME='light';try{if(localStorage.getItem('ce-theme')==='dark')THEME='dark'}catch(e){}
+function L(en,ar){return LANG==='ar'?ar:en}
+var LOGO='<svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><path d="M52 14 A26 26 0 1 0 52 50" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/><rect x="24" y="19" width="22" height="6" rx="3" fill="#fff"/><rect x="24" y="29" width="16" height="6" rx="3" fill="#38C6F4"/><rect x="24" y="39" width="22" height="6" rx="3" fill="#fff"/></svg>';
+var I={
+ over:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+ dev:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
+ map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
+ pol:'<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/>',
+ add:'<path d="M12 5v14M5 12h14"/>',
+ apps:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8"/>',
+ rem:'<path d="M4 4h16v12H5l-1 4z"/>',
+ rep:'<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+ srch:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/>',
+ bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ prof:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+ code:'<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12"/>',
+ lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ geo:'<circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/>',
+ users:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-2-5-5-5.7"/>',
+ log:'<path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+ set:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+};
+function ico(k,s){return '<svg width="'+(s||18)+'" height="'+(s||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+I[k]+'</svg>'}
+
+var BR={'Jeddah HQ':['جدة · المقر الرئيسي',21.5,39.2,412,401],'Riyadh':['الرياض',24.7,46.7,298,290],'Dammam':['الدمام',26.4,50.1,176,158],'Makkah':['مكة المكرمة',21.4,39.8,134,131],'Dubai':['دبي',25.2,55.3,128,125],'Kuwait City':['مدينة الكويت',29.4,48,100,88]};
+function bn(b){return LANG==='ar'&&BR[b]?BR[b][0]:b}
+var STAT={Online:['Online','متصل','c-ok'],Offline:['Offline','غير متصل','c-off'],Alert:['Alert','تنبيه','c-warn'],Kiosk:['Kiosk','كشك','c-info']};
+var DEV=[
+['JD-0412','R52W90ABCD','Fahad K.','Jeddah HQ','Zebra TC58','14',86,'Online'],
+['JD-0398','R52W90ABCE','Kiosk · Store 3','Jeddah HQ','Samsung Tab A9','14',100,'Kiosk'],
+['RY-0218','R52W90AB12','Omar S.','Riyadh','Honeywell CT45','13',54,'Alert'],
+['RY-0204','R52W90AB19','Sara M.','Riyadh','Samsung A55','15',72,'Online'],
+['DM-0042','R52W90AC03','Van 12','Dammam','Zebra TC58','14',12,'Offline'],
+['DM-0051','R52W90AC07','Van 14','Dammam','Zebra TC58','14',64,'Online'],
+['DM-0063','R52W90AC11','Van 17','Dammam','Zebra TC58','14',8,'Offline'],
+['MK-0130','R52W90AD44','Ali H.','Makkah','Samsung Tab A9','14',91,'Online'],
+['DB-0077','R52W90AE15','Warehouse 2','Dubai','Zebra ZQ630','13',38,'Alert'],
+['DB-0081','R52W90AE19','Noura T.','Dubai','Samsung A55','15',67,'Online'],
+['KW-0019','R52W90AF02','Kiosk · Lobby','Kuwait City','Samsung Tab A9','15',100,'Kiosk'],
+['KW-0024','R52W90AF09','Yousef A.','Kuwait City','Honeywell CT45','13',80,'Online']];
+
+function POLY(){return [[30,35],[29.5,34.9],[28,34.6],[26,36.5],[24,38],[21.5,39.1],[18,41.5],[16.5,42.8],[13,43.3],[12.6,45],[14,49],[16,52],[17,55],[19,57.8],[22.5,59.8],[24,57],[25.5,56.3],[24.2,54.3],[24.5,51.6],[26,50.5],[27.5,49.2],[29.5,48],[30,47.7],[32,46],[32.5,39],[30,35]].map(function(p){var q=proj(p[0],p[1]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')}
+var APPS=[
+ {t:'play',n:'SalesApp',v:'v4.2',s:'Acme',c:'#1D6FE0',i:612,p:98,m:'req',u:'4.3'},
+ {t:'play',n:'Chrome',v:'v130',s:'Google',c:'#22B07D',i:1104,p:88,m:'avail',u:'131'},
+ {t:'play',n:'Microsoft Teams',v:'v1416',s:'Microsoft',c:'#5B5FC7',i:205,p:100,m:'avail',u:''},
+ {t:'play',n:'Google Maps',v:'v11.1',s:'Google',c:'#34A853',i:540,p:92,m:'req',u:''},
+ {t:'play',n:'WhatsApp Business',v:'v2.24',s:'WhatsApp',c:'#25D366',i:0,p:0,m:'block',u:''},
+ {t:'play',n:'Game Hub',v:'v3.0',s:'Unknown',c:'#B4361D',i:0,p:0,m:'block',u:''},
+ {t:'private',n:'Print Service',v:'v2.0',s:'Acme IT',c:'#0B1F3A',i:388,p:96,m:'req',u:'2.1'},
+ {t:'private',n:'Catalog',v:'v1.8',s:'Acme IT',c:'#38C6F4',i:120,p:100,m:'req',u:''},
+ {t:'web',n:'HR Portal',v:'web',s:'hr.acme.sa',c:'#E8A23A',i:1248,p:100,m:'avail',u:''},
+ {t:'web',n:'Store Website',v:'web',s:'store.acme.sa',c:'#1556B5',i:120,p:100,m:'req',u:''}];
+var GEO=[
+ {n:['Jeddah HQ','جدة · المقر الرئيسي'],lat:21.5,lon:39.2,r:26,km:'500 m',rule:['On exit: alert manager','عند الخروج: تنبيه المدير'],d:412},
+ {n:['Riyadh warehouse','مستودع الرياض'],lat:24.7,lon:46.7,r:22,km:'300 m',rule:['On exit: lock device','عند الخروج: قفل الجهاز'],d:120},
+ {n:['Dammam depot','مستودع الدمام'],lat:26.4,lon:50.1,r:20,km:'400 m',rule:['On exit after 10 PM: lock device','الخروج بعد 10 مساءً: قفل الجهاز'],d:176},
+ {n:['Store 3 · Jeddah','المتجر 3 · جدة'],lat:19.6,lon:40.6,r:12,km:'100 m',rule:['On enter: apply kiosk policy','عند الدخول: تطبيق سياسة الكشك'],d:24}];
+var LOG=[
+ ['Today 10:42','Majed A.','Policy',['Turned on kiosk mode · Store kiosks','تفعيل وضع الكشك · أجهزة المتاجر'],'10.24.1.12'],
+ ['Today 10:15','Khalid S.','Device',['Remote session with RY-0218 (12 min)','جلسة عن بُعد مع RY-0218 (12 دقيقة)'],'10.24.8.7'],
+ ['Today 09:58','Faisal R.','Device',['Locked DM-0042','قفل الجهاز DM-0042'],'10.24.1.30'],
+ ['Today 09:30','System','Security',['Blocked unapproved app Game Hub on RY-0218','حظر تطبيق Game Hub على RY-0218'],'—'],
+ ['Today 08:02','Huda M.','Device',['Enrolled 36 devices · Riyadh','تسجيل 36 جهازاً · الرياض'],'10.25.0.4'],
+ ['Yesterday 17:20','Majed A.','Admin',['Invited Khalid S. as Help desk','دعوة خالد س. كدعم فني'],'10.24.1.12'],
+ ['Yesterday 16:05','Faisal R.','Security',['Wipe of DM-0042 approved by second admin','موافقة مسؤول ثانٍ على مسح DM-0042'],'10.24.1.30'],
+ ['Yesterday 11:47','Majed A.','Policy',['Blocked USB file transfer · Van Sales','منع نقل الملفات عبر USB · البيع المتنقل'],'10.24.1.12'],
+ ['Oct 28 14:12','System','Security',['Failed sign-in from unknown IP (blocked)','محاولة دخول فاشلة من عنوان غير معروف (تم الحظر)'],'185.x.x.x']];
+var batC=function(b){return b<25?'#D2452B':b<50?'#E8A23A':'#22B07D'};
+
+var ST={view:'overview',f:'All',branch:'',q:'',sel:{},tab:'Overview',pol:1,kiosk:true,mode:'Multi-app',rules:{cam:false,usb:true,unknown:true,reset:true,status:true,wifi:true},m:'QR code',
+ setup:{company:false,branch:false,google:false,device:false},wiz:0,company:'Acme Trading',blocked:false,
+ alerts:['offline','apps','battery','update'],
+ atab:'play',aq:'',amode:{},rs:false,rdev:'RY-0218',rt:'00:00',rsec:0,chat:[['them','Hello, the printer app is not working.','مرحباً، تطبيق الطابعة لا يعمل.']],gz:[true,true,true,false],lt:'All',lq:'',stab:'company',sec:{'2fa':true,sso:false,wipe2:true,ip:false,to:true},region:'ksa',ints:{},pf:0,ron:{},ruleNew:false,ai:[],grp:'Acme Trading',fav:{Lock:1,Locate:1,'Remote control':1}};
+var ALERTS={
+ offline:{c:'#E8A23A',t:['12 devices offline for more than 24 h','12 جهازاً غير متصل لأكثر من 24 ساعة'],m:['Dammam · Van sales handhelds','الدمام · أجهزة البيع المتنقل'],a:[[['Send reminder to drivers','إرسال تذكير للسائقين'],['Reminder sent to 12 drivers by SMS','تم إرسال تذكير إلى 12 سائقاً']],[['Show on map','عرض على الخريطة'],null,'map']]},
+ apps:{c:'#D2452B',t:['Unapproved app detected','تم اكتشاف تطبيق غير معتمد'],m:['Riyadh · RY-0218 · Game Hub','الرياض · RY-0218 · Game Hub'],a:[[['Block and uninstall','حظر وإزالة'],['Game Hub blocked and removed from RY-0218','تم حظر Game Hub وإزالته من RY-0218'],null,'block'],[['Open device','فتح الجهاز'],null,'dev:RY-0218']]},
+ battery:{c:'#E8A23A',t:['Low battery on 6 printers','بطارية منخفضة في 6 طابعات'],m:['Kuwait City · Warehouse','مدينة الكويت · المستودع'],a:[[['Notify branch manager','إبلاغ مدير الفرع'],['Branch manager notified','تم إبلاغ مدير الفرع']]]},
+ update:{c:'#1D6FE0',t:['Android 15 update ready','تحديث أندرويد 15 جاهز'],m:['340 eligible devices','340 جهازاً مؤهلاً'],a:[[['Schedule tonight 2 AM','جدولة الليلة 2 صباحاً'],['Update scheduled for 340 devices at 2:00 AM','تمت جدولة التحديث لـ 340 جهازاً الساعة 2:00 صباحاً']]]}
+};
+
+/* ---------- toast ---------- */
+var tT;function toast(en,ar){var b=$('#toastbox');b.innerHTML='<div class="toast" role="status"><i>✓</i>'+esc(L(en,ar||en))+'</div>';clearTimeout(tT);tT=setTimeout(function(){b.innerHTML=''},3200)}
+
+/* ---------- login ---------- */
+function renderLogin(){
+ $('#login').innerHTML='<div class="lside"><div class="brand" style="padding:0">'+LOGO+'<span>CoreEra <em>Control</em></span></div><div><h1>'+L('Every device.<br>Every branch.<br>One console.','كل جهاز.<br>كل فرع.<br>لوحة تحكم واحدة.')+'</h1><p>'+L("Enroll, secure and support your company's Android devices across Saudi Arabia and the Gulf.",'سجّل أجهزة أندرويد في شركتك واحمِها وادعمها في جميع أنحاء المملكة والخليج.')+'</p><div class="feat"><span>'+L('Arabic and English','عربي وإنجليزي')+'</span><span>'+L('Saudi hosting','استضافة سعودية')+'</span><span>'+L('Setup in 15 minutes','إعداد خلال 15 دقيقة')+'</span></div></div><span style="font-size:13px;color:#8DA1C0">© 2026 CoreEra · '+L('Jeddah','جدة')+'</span></div>'
+ +'<div class="lform"><button class="langbtn" data-lang>'+L('العربية','English')+'</button><form class="lbox" id="lf"><h2>'+L('Sign in','تسجيل الدخول')+'</h2><span class="sub">'+L('Preview: any email and password will work.','نسخة تجريبية: أي بريد وكلمة مرور تعمل.')+'</span>'
+ +'<label class="field">'+L('Work email','البريد الإلكتروني للعمل')+'<input type="email" required autocomplete="username" class="ltr" value="majed@coreeratech.com"></label>'
+ +'<label class="field">'+L('Password','كلمة المرور')+'<input type="password" required autocomplete="current-password" value="demo-password"></label>'
+ +'<button class="btn pri full" type="submit">'+L('Sign in','دخول')+'</button><button class="btn full" type="button" data-enter>'+L('Sign in with Microsoft','الدخول عبر مايكروسوفت')+'</button><span class="sub" style="text-align:center">'+L('Protected with two-factor authentication','محمي بالتحقق الثنائي')+'</span></form></div>';
+ $('#lf').addEventListener('submit',function(e){e.preventDefault();enter()});
+}
+
+/* ---------- sidebar ---------- */
+function renderSide(){
+ var groups=[[L('Manage','الإدارة'),[['overview','over',L('Overview','نظرة عامة')],['devices','dev',L('Devices','الأجهزة')],['map','map',L('Branch map','خريطة الفروع')],['policies','pol',L('Policies','السياسات')],['profiles','prof',L('Profiles','ملفات الإعداد')],['apps','apps',L('Apps','التطبيقات')],['content','log',L('Content','المحتوى')],['enroll','add',L('Enrollment','التسجيل')]]],
+  [L('Automate','الأتمتة'),[['rules','bolt',L('Automation','الأتمتة')],['scripts','code',L('Scripts','السكربتات')],['certs','lock',L('Certificates','الشهادات')]]],
+  [L('Support and insight','الدعم والتحليل'),[['remote','rem',L('Remote support','الدعم عن بُعد')],['geofence','geo',L('Geofencing','السياج الجغرافي')],['reports','rep',L('Reports','التقارير')]]],
+  [L('Admin','الإدارة العامة'),[['users','users',L('Users and roles','المستخدمون والصلاحيات')],['audit','log',L('Audit log','سجل التدقيق')],['settings','set',L('Settings','الإعدادات')]]]];
+ $('#side').innerHTML='<div class="brand">'+LOGO+'<span>CoreEra <em>Control</em></span></div>'
+ +'<button class="cmdk" data-ai style="background:linear-gradient(135deg,rgba(29,111,224,.35),rgba(56,198,244,.2));color:#fff;margin-bottom:8px">'+ico('bolt',16)+'<span>'+L('Ask CoreEra AI','اسأل كور إيرا')+'</span></button>'
+ +'<button class="cmdk" data-pal>'+ico('srch',16)+'<span>'+L('Search or command','بحث أو أمر')+'</span><kbd class="ltr">Ctrl K</kbd></button>'
+ +groups.map(function(g){return '<div class="gl">'+g[0]+'</div>'+g[1].map(function(i){var on=ST.view===i[0]||(ST.view==='device'&&i[0]==='devices');return '<button class="nav'+(on?' on':'')+'" data-go="'+i[0]+'">'+ico(i[1])+'<span>'+i[2]+'</span>'+(i[0]==='overview'&&ST.alerts.length?'<span class="cnt">'+ST.alerts.length+'</span>':'')+(i[0]==='remote'&&ST.rs?'<span class="cnt" style="background:#22B07D">●</span>':'')+'</button>'}).join('')}).join('')
+ +'<div class="me"><span class="av">MA</span><span style="flex:1;min-width:0">'+L('Majed A.','ماجد أ.')+'<small>'+L('Owner','المالك')+' · '+esc(ST.company)+'</small></span><span style="width:100%;display:flex;gap:6px"><button class="mini" style="flex:1;text-align:center;border:1px solid rgba(255,255,255,.14)" data-lang>'+L('العربية','English')+'</button><button class="mini" style="flex:1;text-align:center;border:1px solid rgba(255,255,255,.14)" data-themebtn aria-label="'+L('Toggle dark mode','تبديل الوضع الداكن')+'">'+(THEME==='dark'?L('Light','فاتح'):L('Dark','داكن'))+'</button><button class="mini" style="flex:1;text-align:center;border:1px solid rgba(255,255,255,.14)" data-out>'+L('Sign out','خروج')+'</button></span></div>';
+}
+
+function head(t,s,right){return '<div class="head"><div><h1>'+t+'</h1><div class="sub">'+s+'</div></div><div class="row">'+(right||'')+'</div></div>'}
+function setupDone(){var s=ST.setup;return s.company&&s.branch&&s.google&&s.device}
+function setupCount(){var s=ST.setup;return (s.company?1:0)+(s.branch?1:0)+(s.google?1:0)+(s.device?1:0)}
+
+/* ---------- views ---------- */
+var V={};
+V.overview=function(){
+ var k=[[L('Total devices','إجمالي الأجهزة'),'1,248',L('+36 enrolled this week','+36 جهازاً هذا الأسبوع'),'var(--ok)'],[L('Online now','متصل الآن'),'1,193',L('95.6% of fleet','95.6% من الأجهزة'),'var(--ok)'],[L('Policy compliance','الالتزام بالسياسات'),'98%',L('25 devices need updates','25 جهازاً تحتاج تحديثاً'),'var(--warn)'],[L('Open alerts','تنبيهات مفتوحة'),String(ST.alerts.length),ST.alerts.length?L('Click a fix to resolve','اضغط إجراءً للحل'):L('All clear','لا توجد تنبيهات'),ST.alerts.length?'var(--bad)':'var(--ok)']];
+ var cols='grid-template-columns:1.5fr .7fr .7fr 1.4fr .9fr';
+ var setup='';
+ if(!setupDone()){
+  var st=[['company',L('Add company details','أضف بيانات الشركة')],['branch',L('Create your first branch','أنشئ أول فرع')],['google',L('Connect Android Enterprise','اربط Android Enterprise')],['device',L('Enroll your first device','سجّل أول جهاز')]];
+  setup='<div class="card pad" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;border-color:var(--blue);background:var(--tint)"><div style="flex:1 1 260px"><span class="chip c-info">'+L('Getting started','البداية')+'</span><h2 style="font-size:20px;margin:10px 0 6px">'+L('Set up CoreEra Control in about 15 minutes','جهّز كور إيرا كنترول خلال 15 دقيقة تقريباً')+'</h2><div class="prog" style="margin:12px 0 8px"><i style="width:'+(setupCount()*25)+'%"></i></div><span class="sub">'+setupCount()+' / 4 '+L('steps done','خطوات مكتملة')+'</span></div><div style="flex:1 1 260px">'
+  +st.map(function(s){return '<div class="check'+(ST.setup[s[0]]?' done':'')+'"><span class="ck">'+(ST.setup[s[0]]?'✓':'')+'</span><span>'+s[1]+'</span></div>'}).join('')+'</div><button class="btn pri" data-wiz>'+(setupCount()?L('Continue setup','أكمل الإعداد'):L('Start setup','ابدأ الإعداد'))+'</button></div>';
+ }
+ var alerts=ST.alerts.map(function(id){var a=ALERTS[id];return '<div class="alert"><span class="dot" style="background:'+a.c+'"></span><div style="flex:1;min-width:0"><b style="font-weight:600;font-size:14px">'+L(a.t[0],a.t[1])+'</b><div class="muted" style="font-size:12px">'+L(a.m[0],a.m[1])+'</div><div class="acts">'+a.a.map(function(x,j){return '<button class="btn sm'+(j===0?' pri':'')+'" data-fix="'+id+':'+j+'">'+L(x[0][0],x[0][1])+'</button>'}).join('')+'</div></div></div>'}).join('');
+ return head(L('Overview','نظرة عامة'),L('All branches · Saudi Arabia, UAE, Kuwait','جميع الفروع · السعودية، الإمارات، الكويت'),'<button class="btn" data-pal>'+ico('srch',16)+L('Search','بحث')+' <span class="muted ltr" style="font-size:12px">Ctrl K</span></button><button class="btn pri" data-go="enroll">+ '+L('Enroll devices','تسجيل أجهزة')+'</button>')
+ +setup
+ +'<div class="g4">'+k.map(function(x){return '<div class="card pad kpi"><span>'+x[0]+'</span><b class="ltr">'+x[1]+'</b><i style="color:'+x[3]+'">'+x[2]+'</i></div>'}).join('')+'</div>'
+ +'<div class="g3"><div class="card span2"><div class="row pad" style="justify-content:space-between;padding-bottom:4px"><h2 style="margin:0">'+L('Branches','الفروع')+'</h2><button class="btn sm" data-go="map">'+ico('map',14)+L('Open map','افتح الخريطة')+'</button></div><div class="tbl"><div style="min-width:560px"><div class="tr th" style="'+cols+'"><span>'+L('Branch','الفرع')+'</span><span>'+L('Devices','الأجهزة')+'</span><span>'+L('Online','متصل')+'</span><span>'+L('Compliance','الالتزام')+'</span><span>'+L('Status','الحالة')+'</span></div>'
+ +Object.keys(BR).map(function(b){var x=BR[b],p=Math.round(x[4]/x[3]*100),w=p<90;return '<div class="tr link" style="'+cols+'" data-branch="'+b+'" tabindex="0" role="link"><b style="font-weight:500">'+bn(b)+'</b><span>'+x[3]+'</span><span>'+x[4]+'</span><span class="row nw"><span class="bar"><i style="width:'+p+'%;background:'+(w?'#E8A23A':'#22B07D')+'"></i></span><span class="muted" style="font-size:12px">'+p+'%</span></span><span><span class="chip '+(w?'c-warn':'c-ok')+'">'+(w?L('Needs attention','يحتاج متابعة'):L('Healthy','سليم'))+'</span></span></div>'}).join('')+'</div></div></div>'
+ +'<div class="card pad"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h2 style="margin:0">'+L('Smart alerts','تنبيهات ذكية')+'</h2><span class="chip '+(ST.alerts.length?'c-warn':'c-ok')+'">'+ST.alerts.length+'</span></div>'+(alerts||'<div style="text-align:center;padding:40px 0"><div style="width:48px;height:48px;border-radius:50%;background:var(--okbg);color:var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px">✓</div><b>'+L('All clear','كل شيء على ما يرام')+'</b><div class="muted" style="font-size:13px">'+L('No open alerts right now.','لا توجد تنبيهات حالياً.')+'</div></div>')+'</div></div>'
+ +'<div class="g3"><div class="card pad"><h2>'+L('Device types','أنواع الأجهزة')+'</h2>'+[[L('Handheld terminals','أجهزة محمولة'),612,49],[L('Tablets','أجهزة لوحية'),341,27],[L('Smartphones','هواتف ذكية'),205,16],[L('Mobile printers','طابعات محمولة'),90,8]].map(function(t){return '<div style="margin-bottom:12px"><div class="row" style="justify-content:space-between;font-size:13px"><span>'+t[0]+'</span><span class="muted">'+t[1]+'</span></div><div class="bar" style="height:8px;margin-top:6px"><i style="width:'+t[2]+'%;background:var(--blue)"></i></div></div>'}).join('')+'</div>'
+ +'<div class="card pad"><h2>'+L('Android versions','إصدارات أندرويد')+'</h2><div style="display:flex;align-items:flex-end;gap:14px;height:150px">'+[['12',22,'#C9D6EA'],['13',48,'#8FB3EC'],['14',92,'#1D6FE0'],['15',60,'#38C6F4'],['16',14,'#5B6474']].map(function(v){return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%"><div style="width:100%;height:'+v[1]+'%;background:'+v[2]+';border-radius:6px 6px 0 0"></div><span class="muted" style="font-size:12px">'+v[0]+'</span></div>'}).join('')+'</div></div>'
+ +'<div class="card pad"><h2>'+L('Recent activity','آخر النشاطات')+'</h2><div class="list">'+[[L('Kiosk policy applied · Riyadh','تطبيق سياسة الكشك · الرياض'),L('5 min ago','قبل 5 دقائق')],[L('36 devices enrolled · Jeddah HQ','تسجيل 36 جهازاً · جدة'),L('1 h ago','قبل ساعة')],[L('Device wiped · DM-0042 (lost)','مسح جهاز · DM-0042 (مفقود)'),L('3 h ago','قبل 3 ساعات')],[L('App updated · SalesApp 4.2','تحديث تطبيق · SalesApp 4.2'),L('Yesterday','أمس')]].map(function(r){return '<div style="font-size:13px"><span>'+r[0]+'</span><span class="muted" style="white-space:nowrap">'+r[1]+'</span></div>'}).join('')+'</div></div></div>';
+};
+function filtered(){var q=ST.q.toLowerCase();return DEV.filter(function(d){var gm={'Saudi Arabia':['Jeddah HQ','Riyadh','Dammam','Makkah'],'UAE · Dubai':['Dubai'],'Kuwait City':['Kuwait City'],'Jeddah HQ':['Jeddah HQ'],'Riyadh':['Riyadh'],'Dammam':['Dammam'],'Makkah':['Makkah']}[ST.grp];return (!gm||gm.indexOf(d[3])>-1)&&(ST.f==='All'||d[7]===ST.f)&&(!ST.branch||d[3]===ST.branch)&&(!q||(d.join(' ')+' '+bn(d[3])).toLowerCase().indexOf(q)>-1)})}
+V.devices=function(){
+ var keys=['All','Online','Offline','Alert','Kiosk'];
+ var rows=filtered(),n=Object.keys(ST.sel).length,all=rows.length&&rows.every(function(d){return ST.sel[d[0]]});
+ var cols='grid-template-columns:28px 1.6fr 1.2fr 1.1fr 1.1fr .7fr 1fr .9fr';
+ return head(L('Devices','الأجهزة'),L('1,248 devices · 6 branches · showing a sample','1,248 جهازاً · 6 فروع · عرض عيّنة'),'<button class="btn" data-toastk="export">'+L('Export CSV','تصدير CSV')+'</button><button class="btn pri" data-go="enroll">+ '+L('Enroll devices','تسجيل أجهزة')+'</button>')
+ +'<div class="row"><label class="search">'+ico('srch',16)+'<input type="search" placeholder="'+L('Search by name, serial, user or model','ابحث بالاسم أو الرقم التسلسلي أو المستخدم')+'" data-q value="'+esc(ST.q)+'" aria-label="'+L('Search devices','بحث الأجهزة')+'"></label>'
+ +keys.map(function(k){return '<button class="pill'+(k===ST.f?' on':'')+'" data-f="'+k+'">'+(k==='All'?L('All','الكل'):L(STAT[k][0],STAT[k][1]))+'</button>'}).join('')
+ +(ST.branch?'<button class="pill on" data-clrbranch>'+bn(ST.branch)+' ✕</button>':'')+'</div>'
+ +'<div class="row" style="align-items:flex-start;gap:16px"><div class="card" style="flex:1 1 220px;padding:10px"><div style="padding:6px 10px 8px;font-size:12px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.05em">'+L('Device groups','مجموعات الأجهزة')+'</div>'+GROUPS.map(function(g){var on=ST.grp===g.n;return '<button class="opt" style="border:0;width:100%;flex-direction:row;justify-content:space-between;align-items:center;padding:8px 10px;padding-inline-start:'+(10+g.l*16)+'px;background:'+(on?'var(--tint)':'transparent')+'" data-grp="'+g.n+'"><b style="font-weight:'+(on?600:500)+';font-size:13px">'+(g.l?'└ ':'')+bn(g.n)+'</b><span>'+g.d+'</span></button>'}).join('')+'<div style="padding:10px"><button class="btn sm" style="width:100%" data-msg="New group created" data-msgar="تم إنشاء مجموعة جديدة">+ '+L('New group','مجموعة جديدة')+'</button></div></div>'
+ +'<div class="card tbl" style="flex:999 1 560px;min-width:0"><div style="min-width:920px"><div class="tr th" style="'+cols+'"><span><button class="cb" role="checkbox" aria-checked="'+!!all+'" aria-label="'+L('Select all','تحديد الكل')+'" data-selall>'+(all?'✓':'')+'</button></span><span>'+L('Device','الجهاز')+'</span><span>'+L('User','المستخدم')+'</span><span>'+L('Branch','الفرع')+'</span><span>'+L('Model','الطراز')+'</span><span>'+L('Android','أندرويد')+'</span><span>'+L('Battery','البطارية')+'</span><span>'+L('Status','الحالة')+'</span></div>'
+ +(rows.length?rows.map(function(d){var s=!!ST.sel[d[0]];return '<div class="tr link'+(s?' sel':'')+'" style="'+cols+'" data-dev="'+d[0]+'" tabindex="0" role="link"><span><button class="cb" role="checkbox" aria-checked="'+s+'" aria-label="'+d[0]+'" data-sel="'+d[0]+'">'+(s?'✓':'')+'</button></span><span class="row nw"><span class="ic">'+ico('dev',16)+'</span><span><b class="ltr">'+d[0]+'</b><br><span class="muted ltr" style="font-size:12px">'+d[1]+'</span></span></span><span>'+d[2]+'</span><span>'+bn(d[3])+'</span><span class="ltr">'+d[4]+'</span><span>'+d[5]+'</span><span class="row nw" style="gap:8px"><span class="bar" style="flex:none;width:36px"><i style="width:'+d[6]+'%;background:'+batC(d[6])+'"></i></span><span class="muted" style="font-size:12px">'+d[6]+'%</span></span><span><span class="chip '+STAT[d[7]][2]+'">'+L(STAT[d[7]][0],STAT[d[7]][1])+'</span></span></div>'}).join(''):'<div class="pad muted">'+L('No devices match your search.','لا توجد أجهزة مطابقة.')+'</div>')
+ +'<div class="row pad muted" style="justify-content:space-between;font-size:13px"><span>'+L('Showing','عرض')+' '+rows.length+'</span><span>'+L('Tip: select devices to run bulk actions','نصيحة: حدّد أجهزة لتنفيذ إجراءات جماعية')+'</span></div></div></div></div>'
+ +(n?'<div class="bulk" role="region" aria-label="'+L('Bulk actions','إجراءات جماعية')+'"><b>'+n+' '+L('selected','محدد')+'</b><button class="btn" data-bulk="lock">'+L('Lock','قفل')+'</button><button class="btn" data-bulk="reboot">'+L('Reboot','إعادة تشغيل')+'</button><button class="btn" data-bulk="app">'+L('Push app','تثبيت تطبيق')+'</button><select data-bulkpol aria-label="'+L('Apply policy','تطبيق سياسة')+'"><option value="">'+L('Apply policy…','تطبيق سياسة…')+'</option><option>Van Sales · Standard</option><option>Store kiosks</option><option>Office phones</option></select><button class="btn" data-bulk="clear">'+L('Clear','إلغاء')+'</button></div>':'');
+};
+V.device=function(){
+ var d=DEV.filter(function(x){return x[0]===ST.dev})[0]||DEV[2];
+ var alert=d[7]==='Alert'&&!(d[0]==='RY-0218'&&ST.blocked);
+ var acts=[['Lock','قفل','Lock command sent to ','تم إرسال أمر القفل إلى '],['Reboot','إعادة تشغيل','Reboot command sent to ','تم إرسال أمر إعادة التشغيل إلى '],['Locate','تحديد الموقع','Location updated · ','تم تحديث الموقع · '],['Ring','رنين','Ringing ','جارٍ الرنين ']];
+ var tabs=[['Overview','نظرة عامة'],['Apps','التطبيقات'],['Policies','السياسات'],['Location','الموقع'],['Activity log','السجل']];
+ return '<button class="btn sm" data-go="devices" style="align-self:flex-start">'+L('← All devices','→ كل الأجهزة')+'</button>'
+ +'<div class="head"><div class="row nw" style="gap:16px"><span class="ic" style="width:56px;height:56px;border-radius:14px;background:var(--navy);color:#fff">'+ico('dev',26)+'</span><div><div class="row"><h1 class="ltr">'+d[0]+'</h1><span class="chip '+(alert?'c-warn':STAT[d[7]][2])+'">'+(alert?L('1 alert','تنبيه واحد'):L(STAT[d[7]][0],STAT[d[7]][1]))+'</span></div><div class="sub"><span class="ltr">'+d[4]+'</span> · '+d[2]+' · '+bn(d[3])+' · '+L('Last seen 2 min ago','آخر ظهور قبل دقيقتين')+'</div></div></div><div class="row">'
+ +acts.map(function(a){return '<button class="btn" data-msg="'+esc(a[2]+d[0])+'" data-msgar="'+esc(a[3]+d[0])+'">'+L(a[0],a[1])+'</button>'}).join('')+'<button class="btn" data-amenu aria-expanded="'+!!ST.amenu+'">'+L('More actions','إجراءات أخرى')+' ▾</button><button class="btn danger" data-msg="Wipe needs a second admin to confirm" data-msgar="المسح يحتاج موافقة مسؤول ثانٍ">'+L('Wipe','مسح')+'</button></div></div>'+(ST.amenu?actionMenu(d):'')
+ +'<div class="tabs" role="tablist">'+tabs.map(function(t){return '<button class="tab'+(t[0]===ST.tab?' on':'')+'" data-tab="'+t[0]+'" role="tab" aria-selected="'+(t[0]===ST.tab)+'">'+L(t[0],t[1])+'</button>'}).join('')+'</div>'
+ +'<div class="g3"><div class="span2" style="display:flex;flex-direction:column;gap:16px">'
+ +'<div class="g4">'+[[L('Battery','البطارية'),d[6]+'%',d[6],batC(d[6])],[L('Storage','التخزين'),'18 / 32 GB',56,'var(--blue)'],[L('Memory','الذاكرة'),'2.1 / 4 GB',52,'var(--blue)'],[L('Signal','الإشارة'),L('Wi-Fi · Good','واي فاي · جيدة'),82,'#22B07D']].map(function(s){return '<div class="card pad" style="padding:16px"><span class="muted" style="font-size:12px">'+s[0]+'</span><b class="disp" style="display:block;font-size:21px;margin:6px 0 8px">'+s[1]+'</b><div class="bar"><i style="width:'+s[2]+'%;background:'+s[3]+'"></i></div></div>'}).join('')+'</div>'
+ +'<div class="card pad"><h2>'+L('Device information','معلومات الجهاز')+'</h2><div class="g2" style="gap:0 32px">'+[[L('Model','الطراز'),d[4]],[L('Serial','الرقم التسلسلي'),d[1]],[L('Android','أندرويد'),d[5]+' · Sep 2026'],['IMEI','35 xxxxxx xxxxxx 4'],[L('Enrolled','تاريخ التسجيل'),L('Jan 12, 2026 · QR','12 يناير 2026 · QR')],[L('Mode','الوضع'),L('Fully managed','مُدار بالكامل')],[L('Policy','السياسة'),'Van Sales · Standard'],[L('Branch','الفرع'),bn(d[3])],[L('Wi-Fi','واي فاي'),'Branch network'],[L('IP address','عنوان IP'),'10.24.8.41']].map(function(i){return '<div class="row nw" style="justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--soft);font-size:14px"><span class="muted">'+i[0]+'</span><b style="font-weight:500;text-align:end">'+i[1]+'</b></div>'}).join('')+'</div></div>'
+ +'<div class="card pad"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2 style="margin:0">'+L('Managed apps','التطبيقات المُدارة')+'</h2><button class="btn sm" data-msg="App catalog opens here" data-msgar="يفتح كتالوج التطبيقات هنا">+ '+L('Install app','تثبيت تطبيق')+'</button></div>'
+ +[['S','#1D6FE0','SalesApp','v4.2',L('Installed','مثبت'),'c-ok'],['P','#0B1F3A','Print Service','v2.0',L('Installed','مثبت'),'c-ok'],['C','#22B07D','Chrome','v130',L('Update ready','تحديث جاهز'),'c-info']].concat(alert&&d[0]==='RY-0218'?[['G','#B4361D','Game Hub',L('not approved','غير معتمد'),L('Blocked app','تطبيق محظور'),'c-warn']]:[]).map(function(p){return '<div class="row nw" style="padding:10px 0;border-bottom:1px solid var(--soft)"><span class="ic" style="background:'+p[1]+';color:#fff;font-weight:700">'+p[0]+'</span><span style="flex:1"><b style="font-weight:500" class="ltr">'+p[2]+'</b><br><span class="muted" style="font-size:12px">'+p[3]+'</span></span><span class="chip '+p[5]+'">'+p[4]+'</span></div>'}).join('')+'</div></div>'
+ +'<div style="display:flex;flex-direction:column;gap:16px"><div class="dark pad" style="display:flex;flex-direction:column;align-items:center;gap:14px"><div class="row" style="align-self:stretch;justify-content:space-between"><h2 style="margin:0">'+L('Remote view','العرض عن بُعد')+'</h2><span style="font-size:12px;color:#7CE0B6">● '+L('Ready','جاهز')+'</span></div><div class="phone" style="width:170px;height:300px;background:linear-gradient(180deg,#12305A,#0E2648);display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-content:start">'
+ +['#1D6FE0','#38C6F4','#22B07D','#E8A23A','#5B9BFF','#1B3358','#1B3358','#1B3358','#1B3358'].map(function(c){return '<span style="aspect-ratio:1;border-radius:10px;background:'+c+'"></span>'}).join('')+'</div><button class="btn pri" style="align-self:stretch" data-msg="Remote session request sent to '+esc(d[2])+'" data-msgar="تم إرسال طلب جلسة عن بُعد إلى '+esc(d[2])+'">'+L('Start remote session','بدء جلسة عن بُعد')+'</button></div>'
+ +'<div class="card pad"><h2>'+L('Location','الموقع')+'</h2><div style="position:relative;height:150px;border-radius:12px;background:var(--map);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:24px 24px"><span style="position:absolute;left:54%;top:46%;width:14px;height:14px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 8px rgba(29,111,224,.2)"></span></div><div class="muted" style="font-size:13px;margin-top:10px">'+bn(d[3])+' · '+L('accurate to 15 m · 2 min ago','بدقة 15 م · قبل دقيقتين')+'</div></div>'
+ +(alert&&d[0]==='RY-0218'?'<div class="card pad" style="border-color:#F2D6A8"><h2>'+L('Smart alert','تنبيه ذكي')+'</h2><p style="margin:0 0 10px;font-size:14px">'+L('Unapproved app detected:','تم اكتشاف تطبيق غير معتمد:')+' <b class="ltr">Game Hub</b></p><button class="btn pri" style="width:100%" data-fix="apps:0">'+L('Block and uninstall','حظر وإزالة')+'</button></div>':'')+'</div></div>';
+};
+function proj(lat,lon){return [ (lon-33)/(61-33)*600, (33-lat)/(33-12)*420 ]}
+V.map=function(){
+ var poly=POLY();
+ var off={Makkah:[14,14],'Jeddah HQ':[-14,-6]};
+ var cities=Object.keys(BR).map(function(b){var x=BR[b],p=proj(x[1],x[2]),r=6+Math.sqrt(x[3])*0.9,w=x[4]/x[3]<0.9,o=off[b]||[0,0];
+  return '<g class="city" data-branch="'+b+'" tabindex="0" role="button" aria-label="'+bn(b)+': '+x[3]+'" style="cursor:pointer"><circle cx="'+(p[0]+o[0])+'" cy="'+(p[1]+o[1])+'" r="'+r+'" fill="'+(w?'rgba(232,162,58,.25)':'rgba(56,198,244,.22)')+'"><animate attributeName="r" values="'+r+';'+(r+8)+';'+r+'" dur="2.6s" repeatCount="indefinite"/></circle><circle cx="'+(p[0]+o[0])+'" cy="'+(p[1]+o[1])+'" r="6" fill="'+(w?'#E8A23A':'#38C6F4')+'" stroke="#fff" stroke-width="2"/><text x="'+(p[0]+o[0]+12)+'" y="'+(p[1]+o[1]-10)+'" fill="#fff" font-size="13" font-weight="600" font-family="Inter,IBM Plex Sans Arabic,sans-serif">'+bn(b)+' · '+x[3]+'</text></g>'}).join('');
+ return head(L('Branch map','خريطة الفروع'),L('Live view of every branch · click a city to see its devices','عرض مباشر لكل الفروع · اضغط على مدينة لعرض أجهزتها'),'<span class="chip c-ok">● '+L('Live','مباشر')+'</span>')
+ +'<div class="g3"><div class="dark span2" style="padding:16px;overflow:hidden"><svg viewBox="0 0 600 420" style="width:100%;height:auto;display:block" role="img" aria-label="'+L('Map of branches','خريطة الفروع')+'"><defs><pattern id="gd" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(255,255,255,.08)"/></pattern></defs><rect width="600" height="420" fill="url(#gd)"/><polygon points="'+poly+'" fill="rgba(29,111,224,.16)" stroke="rgba(91,155,255,.5)" stroke-width="1.5"/>'+cities+'</svg></div>'
+ +'<div class="card pad"><h2>'+L('Branches','الفروع')+'</h2><div class="list">'+Object.keys(BR).map(function(b){var x=BR[b],w=x[4]/x[3]<0.9;return '<div class="link" data-branch="'+b+'" style="cursor:pointer" tabindex="0" role="link"><span class="row nw"><span style="width:10px;height:10px;border-radius:50%;background:'+(w?'#E8A23A':'#22B07D')+'"></span>'+bn(b)+'</span><span class="muted">'+x[4]+' / '+x[3]+' '+L('online','متصل')+'</span></div>'}).join('')+'</div></div></div>';
+};
+V.policies=function(){
+ var names=[['Van Sales · Standard','412'],['Store kiosks','120'],['Office phones','205'],['Warehouse scanners','391'],['Managers','38']];
+ var rules=[['cam',L('Allow camera','السماح بالكاميرا'),L('Needed for barcode and photo apps','مطلوب لتطبيقات الباركود والصور')],['usb',L('Block USB file transfer','منع نقل الملفات عبر USB'),L('Stop copying data to a computer','منع نسخ البيانات إلى كمبيوتر')],['unknown',L('Block unknown apps','منع التطبيقات غير المعروفة'),L('Only apps approved in CoreEra','فقط التطبيقات المعتمدة في كور إيرا')],['reset',L('Block factory reset','منع إعادة ضبط المصنع'),L('Device stays enrolled','يبقى الجهاز مسجلاً')],['status',L('Hide status bar','إخفاء شريط الحالة'),L('Users cannot open quick settings','لا يمكن فتح الإعدادات السريعة')],['wifi',L('Lock Wi-Fi to branch network','قفل الواي فاي على شبكة الفرع'),'Branch-RUH, Branch-JED']];
+ var all=[['SalesApp','#1D6FE0'],['Catalog','#38C6F4'],['Print','#0B1F3A']];
+ var apps=!ST.kiosk?all.concat([['Chrome','#22B07D'],['Settings','#8DA1C0'],['Camera','#E8A23A']]):ST.mode==='Multi-app'?all:[all[0]];
+ var title=!ST.kiosk?L('Normal home screen','الشاشة الرئيسية العادية'):ST.mode==='Single app'?'SalesApp':ST.mode==='Web kiosk'?'store.acme.sa':'Acme Store';
+ var modes=[['Single app',L('Single app','تطبيق واحد'),L('One app, full screen','تطبيق واحد بملء الشاشة')],['Multi-app',L('Multi-app','عدة تطبيقات'),L('A simple home screen','شاشة رئيسية مبسطة')],['Web kiosk',L('Web kiosk','كشك ويب'),L('One website only','موقع واحد فقط')]];
+ return head(L('Policies','السياسات'),L('Rules applied to groups of devices','قواعد تُطبق على مجموعات الأجهزة'),'<button class="btn" data-msg="New policy created as a draft" data-msgar="تم إنشاء سياسة جديدة كمسودة">+ '+L('New policy','سياسة جديدة')+'</button><button class="btn pri" data-save>'+L('Save and apply','حفظ وتطبيق')+'</button>')
+ +'<div class="row" style="align-items:flex-start;gap:16px"><div class="card" style="flex:1 1 220px;padding:10px;display:flex;flex-direction:column;gap:4px">'
+ +names.map(function(n,i){return '<button class="opt" style="border:0;background:'+(i===ST.pol?'var(--tint)':'transparent')+'" data-pol="'+i+'"><b class="ltr" style="text-align:start">'+n[0]+'</b><span>'+n[1]+' '+L('devices','جهاز')+'</span></button>'}).join('')+'</div>'
+ +'<div style="flex:999 1 420px;min-width:0;display:flex;flex-direction:column;gap:16px"><div class="card pad" style="display:flex;flex-direction:column;gap:16px"><div class="row nw" style="justify-content:space-between"><div><h2 style="margin:0;font-size:17px">'+L('Kiosk mode','وضع الكشك')+'</h2><span class="sub" style="font-size:13px">'+L('Lock devices to selected apps only','قفل الأجهزة على تطبيقات محددة فقط')+'</span></div><button class="sw" aria-pressed="'+ST.kiosk+'" aria-label="'+L('Kiosk mode','وضع الكشك')+'" data-kiosk></button></div>'
+ +'<div class="g3" style="gap:10px">'+modes.map(function(m){return '<button class="opt'+(m[0]===ST.mode?' on':'')+'" data-mode="'+m[0]+'"><b>'+m[1]+'</b><span>'+m[2]+'</span></button>'}).join('')+'</div>'
+ +'<div class="row"><span class="muted" style="font-size:13px">'+L('Allowed apps:','التطبيقات المسموحة:')+'</span>'+['SalesApp','Catalog','Print Service'].map(function(a){return '<span class="chip c-info ltr" style="font-weight:500;padding:6px 12px">'+a+'</span>'}).join('')+'<button class="pill" style="height:30px;border-style:dashed" data-msg="App picker opens here" data-msgar="تفتح قائمة التطبيقات هنا">+ '+L('Add app','إضافة تطبيق')+'</button></div></div>'
+ +'<div class="card pad"><h2 style="font-size:17px;margin-bottom:4px">'+L('Restrictions','القيود')+'</h2>'+rules.map(function(r){return '<div class="row nw" style="justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--soft)"><span><b style="font-weight:500;font-size:14px">'+r[1]+'</b><br><span class="muted" style="font-size:12px">'+r[2]+'</span></span><button class="sw" aria-pressed="'+!!ST.rules[r[0]]+'" aria-label="'+r[1]+'" data-rule="'+r[0]+'"></button></div>'}).join('')+'</div></div>'
+ +'<div class="dark pad" style="flex:1 1 260px;display:flex;flex-direction:column;align-items:center;gap:12px"><b style="align-self:stretch;font-size:14px">'+L('Device preview','معاينة الجهاز')+'</b><div class="phone" style="width:200px;height:380px;background:linear-gradient(180deg,#F4F6FA,#E6ECF5);color:var(--navy);display:flex;flex-direction:column;gap:14px"><b class="disp" style="text-align:center">'+title+'</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+ +apps.map(function(a){return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:52px;height:52px;border-radius:14px;background:'+a[1]+'"></span><span style="font-size:11px">'+a[0]+'</span></div>'}).join('')+'</div></div><span style="font-size:12px;color:#A9B8CE;text-align:center">'+L('Users only see the allowed apps. Exit needs an admin PIN.','يرى المستخدم التطبيقات المسموحة فقط. الخروج يتطلب رمز المسؤول.')+'</span></div></div>';
+};
+function qrSvg(size){var qr='',n=21;function fd(r,c,R,C){var y=r-R,x=c-C;if(y<0||x<0||y>6||x>6)return null;return y===0||y===6||x===0||x===6||(y>=2&&y<=4&&x>=2&&x<=4)}
+ for(var r=0;r<n;r++)for(var c=0;c<n;c++){var v=fd(r,c,0,0);if(v===null)v=fd(r,c,0,14);if(v===null)v=fd(r,c,14,0);if(v===null){var near=(r<8&&c<8)||(r<8&&c>12)||(r>12&&c<8);v=near?false:((r*7+c*13+r*c)%5<2)}if(v)qr+='<rect x="'+c+'" y="'+r+'" width="1" height="1"/>'}
+ return '<div style="background:#fff;padding:14px;border-radius:14px;display:inline-block"><svg role="img" aria-label="QR" width="'+size+'" height="'+size+'" viewBox="0 0 21 21" shape-rendering="crispEdges" fill="#0B1F3A">'+qr+'</svg></div>'}
+V.enroll=function(){
+ var H={'QR code':[L('QR code','رمز QR'),L('Fastest for a few devices','الأسرع لعدد قليل'),L('Scan to enroll','امسح للتسجيل'),L('Works with any Android 10+ device from the welcome screen.','يعمل مع أي جهاز أندرويد 10+ من شاشة الترحيب.')],'Zero-touch':[L('Zero-touch','بدون لمس'),L('For devices from a reseller','لأجهزة الموزّع'),L('Zero-touch ready','جاهز بدون لمس'),L('Devices bought from your reseller enroll by themselves on first boot.','الأجهزة المشتراة من الموزّع تُسجَّل تلقائياً عند أول تشغيل.')],'Samsung Knox':['Samsung Knox',L('Automatic for Samsung','تلقائي لسامسونج'),'Knox Mobile Enrollment',L('Samsung devices enroll automatically when powered on.','أجهزة سامسونج تُسجَّل تلقائياً عند التشغيل.')],'Enrollment code':[L('Enrollment code','رمز التسجيل'),L('Type a short code','اكتب رمزاً قصيراً'),'ACME-RUH-7Q4K',L('Users type the code in the CoreEra app to enroll.','يكتب المستخدم الرمز في تطبيق كور إيرا للتسجيل.')]};
+ var sel=function(l,o){return '<label class="field">'+l+'<select>'+o.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></label>'};
+ var step=function(n,t){return '<div class="row nw" style="align-self:stretch"><span class="av" style="width:28px;height:28px;font-size:13px;background:'+(n===3?'var(--blue)':'var(--navy)')+'">'+n+'</span><h2 style="margin:0;font-size:17px">'+t+'</h2></div>'};
+ var h=H[ST.m];
+ return head(L('Enroll devices','تسجيل الأجهزة'),L('Add new Android devices in three steps','أضف أجهزة أندرويد جديدة في ثلاث خطوات'),'')
+ +'<div class="row" style="align-items:flex-start;gap:16px"><div style="flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px">'
+ +'<div class="card pad" style="display:flex;flex-direction:column;gap:14px">'+step(1,L('Choose a method','اختر طريقة التسجيل'))+'<div class="g2">'+Object.keys(H).map(function(k){return '<button class="opt'+(k===ST.m?' on':'')+'" data-m="'+k+'"><b style="font-size:15px">'+H[k][0]+'</b><span style="font-size:13px">'+H[k][1]+'</span></button>'}).join('')+'</div></div>'
+ +'<div class="card pad" style="display:flex;flex-direction:column;gap:14px">'+step(2,L('Where do these devices go?','أين ستذهب هذه الأجهزة؟'))+'<div class="g2" style="gap:14px">'+sel(L('Branch','الفرع'),Object.keys(BR).map(bn))+sel(L('Policy','السياسة'),['Van Sales · Standard','Store kiosks','Office phones'])+sel(L('Ownership','الملكية'),[L('Company owned (fully managed)','ملك الشركة (مُدار بالكامل)'),L('Personal (work profile)','شخصي (ملف العمل)')])+sel(L('Wi-Fi during setup','الواي فاي أثناء الإعداد'),['Branch-RUH',L('None (use mobile data)','بدون (بيانات الجوال)')])+'</div></div>'
+ +'<div class="card pad"><h2>'+L('Recently enrolled','آخر الأجهزة المسجلة')+'</h2><div class="list">'+[['RY-0231','Honeywell CT45',L('2 min ago','قبل دقيقتين')],['RY-0230','Honeywell CT45',L('4 min ago','قبل 4 دقائق')],['JD-0413','Zebra TC58',L('1 h ago','قبل ساعة')]].map(function(r){return '<div><b style="font-weight:500" class="ltr">'+r[0]+'</b><span class="muted ltr">'+r[1]+'</span><span style="color:var(--ok);font-weight:600">'+r[2]+'</span></div>'}).join('')+'</div></div></div>'
+ +'<div class="dark pad" style="flex:1 1 320px;display:flex;flex-direction:column;gap:16px;align-items:center;padding:26px">'+step(3,h[2])+qrSvg(189)
+ +'<span style="font-size:14px;color:#C3D0E3;text-align:center;max-width:280px">'+h[3]+'</span><div style="align-self:stretch;display:flex;flex-direction:column;gap:8px;font-size:13px;color:#A9B8CE"><span>1. '+L('Factory reset the device','أعد ضبط الجهاز')+'</span><span>2. '+L('Tap the welcome screen 6 times','اضغط على شاشة الترحيب 6 مرات')+'</span><span>3. '+L('Scan this code and connect to Wi-Fi','امسح الرمز واتصل بالواي فاي')+'</span></div>'
+ +'<div class="row nw" style="align-self:stretch"><button class="btn ghost" style="flex:1" data-msg="QR code PDF downloaded" data-msgar="تم تنزيل ملف PDF">'+L('Download PDF','تنزيل PDF')+'</button><button class="btn pri" style="flex:1" data-msg="Instructions emailed to the branch" data-msgar="تم إرسال التعليمات للفرع">'+L('Email to branch','إرسال للفرع')+'</button></div></div></div>';
+};
+V.soon=function(){var nm={apps:L('Apps','التطبيقات'),remote:L('Remote support','الدعم عن بُعد'),reports:L('Reports','التقارير')}[ST.soon];return head(nm,L('Coming in a later version','قادم في إصدار لاحق'),'')+'<div class="card pad" style="text-align:center;padding:60px 20px"><b class="disp" style="font-size:22px">'+nm+' '+L('is on the roadmap','ضمن خطة التطوير')+'</b><p class="muted">'+L('This section is part of a future CoreEra Control release.','هذا القسم جزء من إصدار قادم لكور إيرا كنترول.')+'</p><button class="btn pri" data-go="overview">'+L('Back to overview','العودة للنظرة العامة')+'</button></div>'};
+
+/* ---------- v3 screens ---------- */
+function tog(on,attr,label){return '<button class="sw" aria-pressed="'+!!on+'" aria-label="'+esc(label)+'" '+attr+'></button>'}
+function sec(t,sub){return '<div style="margin-bottom:12px"><h2 style="margin:0">'+t+'</h2>'+(sub?'<span class="sub" style="font-size:13px">'+sub+'</span>':'')+'</div>'}
+
+V.apps=function(){
+ var tabs=[['play',L('Managed Google Play','متجر Google Play المُدار')],['private',L('Private apps','تطبيقات خاصة')],['web',L('Web apps','تطبيقات ويب')]];
+ var q=(ST.aq||'').toLowerCase();
+ var list=APPS.filter(function(a){return a.t===ST.atab&&(!q||a.n.toLowerCase().indexOf(q)>-1)});
+ var modes={req:[L('Required','إلزامي'),'c-ok'],avail:[L('Available','متاح'),'c-info'],block:[L('Blocked','محظور'),'c-warn']};
+ return head(L('Apps','التطبيقات'),L('Approve, push and update apps on every device','اعتمد التطبيقات وثبّتها وحدّثها على كل الأجهزة'),'<button class="btn" data-msg="Checked for updates · 3 apps have new versions" data-msgar="تم التحقق · 3 تطبيقات لها تحديثات">'+L('Check for updates','فحص التحديثات')+'</button><button class="btn pri" data-msg="Google Play opens here to approve a new app" data-msgar="يفتح متجر Google Play هنا لاعتماد تطبيق جديد">+ '+L('Add app','إضافة تطبيق')+'</button>')
+ +'<div class="g4">'+[[L('Managed apps','تطبيقات مُدارة'),'24'],[L('Installs this week','تثبيتات هذا الأسبوع'),'3,912'],[L('Pending updates','تحديثات معلّقة'),'3'],[L('Blocked apps','تطبيقات محظورة'),'7']].map(function(k){return '<div class="card pad kpi"><span>'+k[0]+'</span><b>'+k[1]+'</b></div>'}).join('')+'</div>'
+ +'<div class="tabs" role="tablist">'+tabs.map(function(t){return '<button class="tab'+(t[0]===ST.atab?' on':'')+'" data-atab="'+t[0]+'" role="tab" aria-selected="'+(t[0]===ST.atab)+'">'+t[1]+'</button>'}).join('')+'</div>'
+ +'<label class="search" style="flex:none">'+ico('srch',16)+'<input type="search" data-aq value="'+esc(ST.aq||'')+'" placeholder="'+L('Search apps','ابحث في التطبيقات')+'" aria-label="'+L('Search apps','ابحث في التطبيقات')+'"></label>'
+ +'<div class="g3">'+(list.length?list.map(function(a,i){var m=ST.amode[a.n]||a.m;return '<div class="card pad" style="display:flex;flex-direction:column;gap:14px"><div class="row nw"><span class="ic" style="width:48px;height:48px;border-radius:13px;background:'+a.c+';color:#fff;font:700 18px Inter,sans-serif">'+a.n[0]+'</span><div style="flex:1;min-width:0"><b class="ltr" style="display:block">'+a.n+'</b><span class="muted" style="font-size:12px">'+a.v+' · '+a.s+'</span></div><span class="chip '+modes[m][1]+'">'+modes[m][0]+'</span></div>'
+  +'<div class="row" style="justify-content:space-between;font-size:13px"><span class="muted">'+L('Installed on','مثبت على')+' <b style="color:var(--text)">'+a.i+'</b> '+L('devices','جهاز')+'</span>'+(a.u?'<span class="chip c-info">'+L('Update','تحديث')+' '+a.u+'</span>':'')+'</div>'
+  +'<div class="bar" style="flex:none;height:6px"><i style="width:'+a.p+'%;background:var(--blue)"></i></div>'
+  +'<div class="row">'+['req','avail','block'].map(function(k){return '<button class="pill'+(k===m?' on':'')+'" style="height:32px;font-size:12px" data-amode="'+esc(a.n)+':'+k+'">'+modes[k][0]+'</button>'}).join('')+(a.u?'<button class="btn sm pri" style="margin-inline-start:auto" data-msg="'+esc(a.n)+' '+a.u+' pushed to '+a.i+' devices" data-msgar="تم إرسال '+esc(a.n)+' '+a.u+' إلى '+a.i+' جهاز">'+L('Push update','نشر التحديث')+'</button>':'')+'</div></div>'}).join(''):'<div class="card pad muted">'+L('No apps found.','لا توجد تطبيقات.')+'</div>')+'</div>';
+};
+
+V.remote=function(){
+ var on=ST.rs,dev=DEV.filter(function(d){return d[0]===ST.rdev})[0]||DEV[2];
+ var online=DEV.filter(function(d){return d[7]!=='Offline'});
+ var tools=[['home',L('Home','الرئيسية')],['back',L('Back','رجوع')],['shot',L('Screenshot','لقطة شاشة')],['files',L('Files','الملفات')],['lockd',L('Lock','قفل')]];
+ var screen=on?'<div style="display:flex;flex-direction:column;gap:10px;height:100%"><div class="row nw" style="justify-content:space-between;font-size:10px;color:#5B6474"><span>9:41</span><span>Wi-Fi · 54%</span></div><b style="font:700 14px Inter,sans-serif;color:#0B1F3A">SalesApp</b><div style="background:#fff;border-radius:10px;padding:10px;font-size:11px;color:#0B1F3A;display:flex;flex-direction:column;gap:6px"><b>'+L('Route 14 · Today','المسار 14 · اليوم')+'</b><span style="color:#5B6474">'+L('18 stops · 7 done','18 محطة · 7 مكتملة')+'</span><div style="height:6px;border-radius:6px;background:#EEF1F5"><div style="width:39%;height:100%;border-radius:6px;background:#1D6FE0"></div></div></div><div style="background:#FDF1DC;border-radius:10px;padding:10px;font-size:11px;color:#8A5A0B">'+L('Printer not connected','الطابعة غير متصلة')+'</div><div style="background:#1D6FE0;border-radius:10px;padding:10px;font-size:11px;color:#fff;text-align:center;margin-top:auto">'+L('Start next stop','ابدأ المحطة التالية')+'</div></div>'
+ :'<div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#8DA1C0;text-align:center;font-size:12px">'+ico('rem',28)+'<span>'+L('Not connected','غير متصل')+'</span></div>';
+ return head(L('Remote support','الدعم عن بُعد'),L('See and control a device screen to help users instantly','شاهد شاشة الجهاز وتحكّم بها لمساعدة المستخدم فوراً'),on?'<span class="chip c-ok">● '+L('Live','مباشر')+' · <span class="ltr" id="rt">'+ST.rt+'</span></span><button class="btn danger" data-rend>'+L('End session','إنهاء الجلسة')+'</button>':'')
+ +'<div class="row" style="align-items:flex-start;gap:16px"><div class="card" style="flex:1 1 240px;padding:10px"><div class="pad" style="padding:8px 10px"><b>'+L('Online devices','الأجهزة المتصلة')+'</b></div>'
+ +online.map(function(d){var a=d[0]===dev[0];return '<button class="opt" style="border:0;width:100%;flex-direction:row;align-items:center;gap:10px;background:'+(a?'var(--tint)':'transparent')+'" data-rdev="'+d[0]+'"><span class="ic">'+ico('dev',16)+'</span><span style="display:flex;flex-direction:column;flex:1;min-width:0"><b class="ltr">'+d[0]+'</b><span>'+d[2]+' · '+bn(d[3])+'</span></span>'+(d[7]==='Alert'?'<span class="chip c-warn">!</span>':'')+'</button>'}).join('')+'</div>'
+ +'<div class="dark" style="flex:2 1 300px;min-width:0;padding:22px;display:flex;flex-direction:column;align-items:center;gap:16px"><div class="row" style="align-self:stretch;justify-content:space-between"><b><span class="ltr">'+dev[0]+' · '+dev[2]+'</span></b><span style="font-size:12px;color:#8DA1C0" class="ltr">'+dev[4]+'</span></div>'
+ +'<div class="phone" style="width:230px;height:430px;background:linear-gradient(180deg,#F4F6FA,#E6ECF5);'+(on?'box-shadow:0 0 0 3px #38C6F4':'')+'">'+screen+'</div>'
+ +(on?'<div class="row" style="justify-content:center">'+tools.map(function(t){return '<button class="btn ghost sm" data-msg="'+t[1]+' sent" data-msgar="تم تنفيذ: '+t[1]+'">'+t[1]+'</button>'}).join('')+'</div>':'<button class="btn pri" style="min-width:240px" data-rstart>'+L('Request remote session','طلب جلسة عن بُعد')+'</button><span style="font-size:12px;color:#8DA1C0;text-align:center;max-width:300px">'+L('The user sees a prompt and must accept before you can view the screen.','يظهر للمستخدم طلب ويجب أن يوافق قبل عرض الشاشة.')+'</span>')+'</div>'
+ +'<div class="card pad" style="flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:520px"><b>'+L('Chat with user','محادثة مع المستخدم')+'</b><div style="flex:1;display:flex;flex-direction:column;gap:8px;overflow:auto">'
+ +ST.chat.map(function(m){return '<div style="max-width:85%;padding:9px 12px;border-radius:14px;font-size:13px;'+(m[0]==='me'?'align-self:flex-end;background:var(--blue);color:#fff':'align-self:flex-start;background:var(--soft)')+'">'+esc(L(m[1],m[2]||m[1]))+'</div>'}).join('')+'</div>'
+ +'<form class="row nw" data-chat><input aria-label="'+L('Message','رسالة')+'" placeholder="'+L('Type a message…','اكتب رسالة…')+'" style="flex:1;min-width:0;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:var(--card);color:var(--text)"><button class="btn pri" type="submit">'+L('Send','إرسال')+'</button></form>'
+ +'<div style="border-top:1px solid var(--soft);padding-top:10px;font-size:12px" class="muted">'+L('Sessions are recorded in the audit log.','تُسجَّل الجلسات في سجل التدقيق.')+'</div></div></div>';
+};
+
+V.reports=function(){
+ var pts=[93,94,93,95,96,95,94,96,97,96,95,96,97,97,96,95,96,97,98,97,96,97,97,98,97,96,97,98,97,96];
+ var path=pts.map(function(v,i){return (i?'L':'M')+(i*20)+' '+(160-(v-90)*18)}).join(' ');
+ var reps=[[L('Weekly fleet health','صحة الأجهزة الأسبوعية'),L('Every Sunday 8:00 · PDF','كل أحد 8:00 · PDF'),'it@acme.sa'],[L('Offline devices by branch','الأجهزة غير المتصلة حسب الفرع'),L('Daily 7:00 · Excel','يومياً 7:00 · إكسل'),L('Branch managers','مدراء الفروع')],[L('App installs and versions','تثبيت وإصدارات التطبيقات'),L('Monthly · Excel','شهرياً · إكسل'),'it@acme.sa'],[L('Lost and wiped devices','الأجهزة المفقودة والممسوحة'),L('Monthly · PDF','شهرياً · PDF'),L('Finance, Security','المالية، الأمن')]];
+ return head(L('Reports','التقارير'),L('Fleet health over time, and reports sent to your team automatically','صحة الأجهزة بمرور الوقت، وتقارير تُرسل لفريقك تلقائياً'),'<select class="btn" aria-label="'+L('Period','الفترة')+'"><option>'+L('Last 30 days','آخر 30 يوماً')+'</option><option>'+L('Last 90 days','آخر 90 يوماً')+'</option></select><button class="btn pri" data-msg="Report builder opens here" data-msgar="يفتح منشئ التقارير هنا">+ '+L('New report','تقرير جديد')+'</button>')
+ +'<div class="g4">'+[[L('Average online','متوسط الاتصال'),'96.1%','+0.8%'],[L('Devices enrolled','أجهزة مسجلة'),'+148','30 '+L('days','يوماً')],[L('Devices retired','أجهزة مستبعدة'),'21','30 '+L('days','يوماً')],[L('Tickets solved remotely','طلبات حُلّت عن بُعد'),'63','-41% '+L('site visits','زيارات ميدانية')]].map(function(k){return '<div class="card pad kpi"><span>'+k[0]+'</span><b class="ltr">'+k[1]+'</b><i style="color:var(--ok)">'+k[2]+'</i></div>'}).join('')+'</div>'
+ +'<div class="g3"><div class="card pad span2">'+sec(L('Devices online · last 30 days','الأجهزة المتصلة · آخر 30 يوماً'),L('Share of the fleet that checked in each day','نسبة الأجهزة التي اتصلت يومياً'))+'<svg viewBox="0 0 580 170" style="width:100%;height:auto;direction:ltr" role="img" aria-label="'+L('Line chart, online rate between 93% and 98%','رسم بياني، نسبة الاتصال بين 93% و98%')+'"><defs><linearGradient id="lg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1D6FE0" stop-opacity=".25"/><stop offset="1" stop-color="#1D6FE0" stop-opacity="0"/></linearGradient></defs>'
+ +[0,1,2,3].map(function(i){var y=16+i*36;return '<line x1="0" x2="580" y1="'+y+'" y2="'+y+'" stroke="var(--soft)"/><text x="0" y="'+(y-4)+'" font-size="10" fill="var(--slate)">'+(98-i*2)+'%</text>'}).join('')
+ +'<path d="'+path+' L580 170 L0 170Z" fill="url(#lg)"/><path d="'+path+'" fill="none" stroke="#1D6FE0" stroke-width="2.5" stroke-linejoin="round"/><circle cx="580" cy="'+(160-(96-90)*18)+'" r="4" fill="#1D6FE0"/></svg></div>'
+ +'<div class="card pad">'+sec(L('Compliance by branch','الالتزام حسب الفرع'))+Object.keys(BR).map(function(b){var x=BR[b],p=Math.round(x[4]/x[3]*100);return '<div style="margin-bottom:12px"><div class="row" style="justify-content:space-between;font-size:13px"><span>'+bn(b)+'</span><span class="muted">'+p+'%</span></div><div class="bar" style="height:8px;margin-top:6px"><i style="width:'+p+'%;background:'+(p<90?'#E8A23A':'#22B07D')+'"></i></div></div>'}).join('')+'</div></div>'
+ +'<div class="card"><div class="pad" style="padding-bottom:0">'+sec(L('Scheduled reports','التقارير المجدولة'))+'</div><div class="tbl"><div style="min-width:640px">'+reps.map(function(r){return '<div class="tr" style="grid-template-columns:1.6fr 1.3fr 1.2fr auto"><b style="font-weight:500">'+r[0]+'</b><span class="muted">'+r[1]+'</span><span class="muted">'+r[2]+'</span><span class="row nw"><button class="btn sm" data-msg="Report generated and downloaded" data-msgar="تم إنشاء التقرير وتنزيله">'+L('Run now','تشغيل الآن')+'</button></span></div>'}).join('')+'</div></div></div>';
+};
+
+V.geofence=function(){
+ var zones=GEO;
+ var circles=zones.map(function(z,i){var p=proj(z.lat,z.lon),on=ST.gz[i];return '<g opacity="'+(on?1:.35)+'"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+z.r+'" fill="rgba(56,198,244,.14)" stroke="#38C6F4" stroke-width="1.5" stroke-dasharray="4 4"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#fff"/><text x="'+(p[0]+z.r+6)+'" y="'+(p[1]+4)+'" fill="#fff" font-size="12" font-weight="600" font-family="Inter,IBM Plex Sans Arabic,sans-serif">'+L(z.n[0],z.n[1])+'</text></g>'}).join('');
+ return head(L('Geofencing','السياج الجغرافي'),L('Automatic rules when devices enter or leave an area','قواعد تلقائية عند دخول الأجهزة منطقة أو خروجها منها'),'<button class="btn pri" data-msg="Draw a new zone on the map" data-msgar="ارسم منطقة جديدة على الخريطة">+ '+L('New zone','منطقة جديدة')+'</button>')
+ +'<div class="g3"><div class="dark span2" style="padding:16px"><svg viewBox="0 0 600 420" style="width:100%;height:auto;display:block;direction:ltr" role="img" aria-label="'+L('Map of zones','خريطة المناطق')+'"><rect width="600" height="420" fill="url(#gd2)"/><defs><pattern id="gd2" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="rgba(255,255,255,.08)"/></pattern></defs><polygon points="'+POLY()+'" fill="rgba(29,111,224,.16)" stroke="rgba(91,155,255,.5)" stroke-width="1.5"/>'+circles+'</svg></div>'
+ +'<div class="card pad">'+sec(L('Recent events','آخر الأحداث'))+'<div class="list">'+[[L('DM-0042 left Dammam depot','DM-0042 غادر مستودع الدمام'),L('Device locked','تم قفل الجهاز'),'c-warn'],[L('JD-0398 entered Store 3','JD-0398 دخل المتجر 3'),L('Kiosk policy applied','تم تطبيق سياسة الكشك'),'c-info'],[L('RY-0204 left Riyadh office','RY-0204 غادر مكتب الرياض'),L('Manager notified','تم إبلاغ المدير'),'c-ok']].map(function(e){return '<div style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-size:13px">'+e[0]+'</span><span class="chip '+e[2]+'">'+e[1]+'</span></div>'}).join('')+'</div></div></div>'
+ +'<div class="card"><div class="tbl"><div style="min-width:720px"><div class="tr th" style="grid-template-columns:1.4fr 1fr 1.6fr .8fr auto"><span>'+L('Zone','المنطقة')+'</span><span>'+L('Radius','نصف القطر')+'</span><span>'+L('Rule','القاعدة')+'</span><span>'+L('Devices','الأجهزة')+'</span><span>'+L('Active','مفعّل')+'</span></div>'
+ +zones.map(function(z,i){return '<div class="tr" style="grid-template-columns:1.4fr 1fr 1.6fr .8fr auto"><b style="font-weight:500">'+L(z.n[0],z.n[1])+'</b><span class="ltr">'+z.km+'</span><span>'+L(z.rule[0],z.rule[1])+'</span><span>'+z.d+'</span>'+tog(ST.gz[i],'data-gz="'+i+'"',z.n[0])+'</div>'}).join('')+'</div></div></div>';
+};
+
+V.users=function(){
+ var roles=['Owner','Admin','Branch manager','Help desk','Viewer'],rar={'Owner':'المالك','Admin':'مسؤول','Branch manager':'مدير فرع','Help desk':'الدعم الفني','Viewer':'مشاهد'};
+ var perms=[[L('Enroll devices','تسجيل الأجهزة'),[1,1,1,0,0]],[L('Lock and locate','القفل وتحديد الموقع'),[1,1,1,1,0]],[L('Wipe devices','مسح الأجهزة'),[1,1,0,0,0]],[L('Edit policies','تعديل السياسات'),[1,1,0,0,0]],[L('Remote support','الدعم عن بُعد'),[1,1,1,1,0]],[L('View reports','عرض التقارير'),[1,1,1,1,1]],[L('Manage admins and billing','إدارة المسؤولين والفوترة'),[1,0,0,0,0]]];
+ var us=[['Majed A.','majed@acme.sa','Owner',L('All branches','كل الفروع'),true,L('Now','الآن')],['Faisal R.','faisal@acme.sa','Admin',L('All branches','كل الفروع'),true,L('1 h ago','قبل ساعة')],['Huda M.','huda@acme.sa','Branch manager',bn('Riyadh'),true,L('Today','اليوم')],['Khalid S.','khalid@acme.sa','Help desk',bn('Jeddah HQ')+', '+bn('Makkah'),false,L('Yesterday','أمس')],['Auditor','audit@acme.sa','Viewer',L('All branches','كل الفروع'),true,L('Last week','الأسبوع الماضي')]];
+ return head(L('Users and roles','المستخدمون والصلاحيات'),L('Who can manage which devices, and what they can do','من يدير أي أجهزة، وما الصلاحيات المتاحة له'),'<button class="btn pri" data-msg="Invitation sent" data-msgar="تم إرسال الدعوة">+ '+L('Invite admin','دعوة مسؤول')+'</button>')
+ +'<div class="card"><div class="tbl"><div style="min-width:820px"><div class="tr th" style="grid-template-columns:1.6fr 1fr 1.4fr .7fr .9fr"><span>'+L('Name','الاسم')+'</span><span>'+L('Role','الدور')+'</span><span>'+L('Branches','الفروع')+'</span><span>2FA</span><span>'+L('Last active','آخر نشاط')+'</span></div>'
+ +us.map(function(u){return '<div class="tr" style="grid-template-columns:1.6fr 1fr 1.4fr .7fr .9fr"><span class="row nw"><span class="av" style="width:32px;height:32px;font-size:12px">'+u[0].split(' ').map(function(x){return x[0]}).join('')+'</span><span><b style="font-weight:500" class="ltr">'+u[0]+'</b><br><span class="muted ltr" style="font-size:12px">'+u[1]+'</span></span></span><span><span class="chip c-info">'+L(u[2],rar[u[2]])+'</span></span><span>'+u[3]+'</span><span><span class="chip '+(u[4]?'c-ok':'c-warn')+'">'+(u[4]?L('On','مفعل'):L('Off','معطل'))+'</span></span><span class="muted">'+u[5]+'</span></div>'}).join('')+'</div></div></div>'
+ +'<div class="card"><div class="pad" style="padding-bottom:0">'+sec(L('Role permissions','صلاحيات الأدوار'),L('Branch managers only see devices in their own branches.','مدير الفرع يرى أجهزة فروعه فقط.'))+'</div><div class="tbl"><div style="min-width:760px"><div class="tr th" style="grid-template-columns:1.8fr repeat(5,1fr)"><span>'+L('Permission','الصلاحية')+'</span>'+roles.map(function(r){return '<span style="text-align:center">'+L(r,rar[r])+'</span>'}).join('')+'</div>'
+ +perms.map(function(p){return '<div class="tr" style="grid-template-columns:1.8fr repeat(5,1fr)"><span>'+p[0]+'</span>'+p[1].map(function(v){return '<span style="text-align:center;font-weight:700;color:'+(v?'var(--ok)':'var(--line)')+'" aria-label="'+(v?L('Allowed','مسموح'):L('Not allowed','غير مسموح'))+'">'+(v?'✓':'—')+'</span>'}).join('')+'</div>'}).join('')+'</div></div></div>';
+};
+
+V.audit=function(){
+ var types=['All','Device','Policy','Admin','Security'],tar={All:'الكل',Device:'الأجهزة',Policy:'السياسات',Admin:'المسؤولون',Security:'الأمان'};
+ var q=(ST.lq||'').toLowerCase();
+ var rows=LOG.filter(function(r){return (ST.lt==='All'||r[2]===ST.lt)&&(!q||(r.join(' ')+L(r[3][0],r[3][1])).toLowerCase().indexOf(q)>-1)});
+ var cols='grid-template-columns:1fr 1fr .9fr 2.2fr 1fr';
+ return head(L('Audit log','سجل التدقيق'),L('Every action by every admin, kept for 12 months','كل إجراء لكل مسؤول، محفوظ لمدة 12 شهراً'),'<button class="btn" data-msg="Audit log exported" data-msgar="تم تصدير سجل التدقيق">'+L('Export','تصدير')+'</button>')
+ +'<div class="row"><label class="search">'+ico('srch',16)+'<input type="search" data-lq value="'+esc(ST.lq||'')+'" placeholder="'+L('Search by admin, device or action','ابحث بالمسؤول أو الجهاز أو الإجراء')+'" aria-label="'+L('Search log','بحث في السجل')+'"></label>'+types.map(function(t){return '<button class="pill'+(t===ST.lt?' on':'')+'" data-lt="'+t+'">'+L(t,tar[t])+'</button>'}).join('')+'</div>'
+ +'<div class="card tbl"><div style="min-width:820px"><div class="tr th" style="'+cols+'"><span>'+L('Time','الوقت')+'</span><span>'+L('Admin','المسؤول')+'</span><span>'+L('Type','النوع')+'</span><span>'+L('Action','الإجراء')+'</span><span>'+L('IP address','عنوان IP')+'</span></div>'
+ +(rows.length?rows.map(function(r){var c={Device:'c-info',Policy:'c-ok',Admin:'c-off',Security:'c-warn'}[r[2]];return '<div class="tr" style="'+cols+'"><span class="muted ltr" style="font-size:13px">'+r[0]+'</span><span>'+r[1]+'</span><span><span class="chip '+c+'">'+L(r[2],tar[r[2]])+'</span></span><span>'+L(r[3][0],r[3][1])+'</span><span class="muted ltr" style="font-size:13px">'+r[4]+'</span></div>'}).join(''):'<div class="pad muted">'+L('No entries match.','لا توجد نتائج.')+'</div>')+'</div></div>';
+};
+
+V.settings=function(){
+ var tabs=[['company',L('Company','الشركة')],['security',L('Security','الأمان')],['data',L('Data and hosting','البيانات والاستضافة')],['int',L('Integrations','التكاملات')],['billing',L('Billing','الفوترة')]];
+ var t=ST.stab,b='';
+ if(t==='company')b='<div class="card pad" style="max-width:720px;display:flex;flex-direction:column;gap:14px">'+sec(L('Company profile','ملف الشركة'))+'<div class="g2" style="gap:14px"><label class="field">'+L('Company name','اسم الشركة')+'<input value="'+esc(ST.company)+'" data-cname></label><label class="field">'+L('Commercial registration','السجل التجاري')+'<input placeholder="[CR number]"></label><label class="field">'+L('Default language','اللغة الافتراضية')+'<select><option>'+L('Arabic','العربية')+'</option><option>'+L('English','الإنجليزية')+'</option></select></label><label class="field">'+L('Time zone','المنطقة الزمنية')+'<select><option>GMT+3 · Riyadh</option></select></label></div><button class="btn pri" style="align-self:flex-start" data-msg="Company profile saved" data-msgar="تم حفظ ملف الشركة">'+L('Save','حفظ')+'</button></div>';
+ if(t==='security')b='<div class="card pad" style="max-width:720px">'+sec(L('Security','الأمان'))+[['2fa',L('Require two-factor sign-in for all admins','إلزام التحقق الثنائي لكل المسؤولين')],['sso',L('Sign in with Microsoft Entra ID','الدخول عبر Microsoft Entra ID')],['wipe2',L('Wipe needs approval from a second admin','المسح يحتاج موافقة مسؤول ثانٍ')],['ip',L('Allow console access only from company network','السماح بالدخول من شبكة الشركة فقط')],['to',L('Sign out after 30 minutes of inactivity','تسجيل الخروج بعد 30 دقيقة من عدم النشاط')]].map(function(s){return '<div class="row nw" style="justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--soft)"><span style="font-size:14px">'+s[1]+'</span>'+tog(ST.sec[s[0]],'data-sec="'+s[0]+'"',s[1])+'</div>'}).join('')+'</div>';
+ if(t==='data')b='<div class="card pad" style="max-width:720px;display:flex;flex-direction:column;gap:12px">'+sec(L('Where your data is stored','مكان تخزين بياناتك'),L('Choose the region for device data, logs and backups.','اختر منطقة تخزين بيانات الأجهزة والسجلات والنسخ الاحتياطية.'))+[['ksa',L('Saudi Arabia (Riyadh)','السعودية (الرياض)'),L('Recommended for Saudi companies','موصى به للشركات السعودية')],['uae',L('UAE (Dubai)','الإمارات (دبي)'),''],['eu',L('Europe (Frankfurt)','أوروبا (فرانكفورت)'),'']].map(function(r){return '<button class="opt'+(ST.region===r[0]?' on':'')+'" data-region="'+r[0]+'" style="flex-direction:row;align-items:center;gap:12px"><span style="width:18px;height:18px;border-radius:50%;border:2px solid '+(ST.region===r[0]?'var(--blue)':'var(--line)')+';display:flex;align-items:center;justify-content:center;flex:none">'+(ST.region===r[0]?'<span style="width:8px;height:8px;border-radius:50%;background:var(--blue)"></span>':'')+'</span><span style="display:flex;flex-direction:column"><b>'+r[1]+'</b>'+(r[2]?'<span>'+r[2]+'</span>':'')+'</span></button>'}).join('')+'<span class="sub" style="font-size:13px">'+L('Hosting regions are planned. Final availability will be confirmed at launch.','مناطق الاستضافة مخطط لها، وسيتم تأكيد التوفر عند الإطلاق.')+'</span></div>';
+ if(t==='int')b='<div class="g3">'+[['Android Enterprise','#22B07D',L('Connected','مرتبط'),1],['Samsung Knox','#1428A0',L('Not connected','غير مرتبط'),0],['Zebra OEMConfig','#0B1F3A',L('Not connected','غير مرتبط'),0],['Microsoft Entra ID','#1D6FE0',L('Not connected','غير مرتبط'),0],['Microsoft Teams',  '#5B5FC7',L('Not connected','غير مرتبط'),0],['WhatsApp alerts','#25D366',L('Not connected','غير مرتبط'),0]].map(function(x){var on=x[3]||ST.ints[x[0]];return '<div class="card pad" style="display:flex;flex-direction:column;gap:14px"><div class="row nw"><span class="ic" style="width:44px;height:44px;background:'+x[1]+';color:#fff;font-weight:700">'+x[0][0]+'</span><b class="ltr">'+x[0]+'</b></div><span class="chip '+(on?'c-ok':'c-off')+'" style="align-self:flex-start">'+(on?L('Connected','مرتبط'):x[2])+'</span><button class="btn sm" '+(on?'disabled':'data-int="'+esc(x[0])+'"')+'>'+(on?L('Manage','إدارة'):L('Connect','ربط'))+'</button></div>'}).join('')+'</div>';
+ if(t==='billing')b='<div class="g3"><div class="card pad span2" style="display:flex;flex-direction:column;gap:10px">'+sec(L('Plan','الباقة'))+'<b class="disp" style="font-size:24px">CoreEra Control · Business</b><span class="muted">'+L('Billed monthly in SAR · price per device to be announced','فوترة شهرية بالريال · سعر الجهاز يُعلن لاحقاً')+'</span><div class="row" style="margin-top:8px"><span class="chip c-info">1,248 '+L('devices','جهاز')+'</span><span class="chip c-ok">'+L('ZATCA e-invoices','فواتير إلكترونية متوافقة مع زاتكا')+'</span></div></div><div class="card pad">'+sec(L('Invoices','الفواتير'))+'<div class="list"><div><span>'+L('No invoices yet','لا توجد فواتير بعد')+'</span></div></div></div></div>';
+ return head(L('Settings','الإعدادات'),L('Company, security, data and integrations','الشركة والأمان والبيانات والتكاملات'),'')
+ +'<div class="tabs" role="tablist">'+tabs.map(function(x){return '<button class="tab'+(x[0]===t?' on':'')+'" data-stab="'+x[0]+'" role="tab" aria-selected="'+(x[0]===t)+'">'+x[1]+'</button>'}).join('')+'</div>'+b;
+};
+
+/* ---------- v4 screens ---------- */
+var PROFILES=[
+ {n:'Field Sales · Standard',fam:'Android',v:'4.2',cfg:['Wi-Fi: Branch networks','Passcode: 6 digits','Block USB transfer','VPN: Always on'],apps:['SalesApp','Print Service'],dev:412,st:'ok'},
+ {n:'Store Kiosk',fam:'Android',v:'2.0',cfg:['Kiosk: Multi-app','Hide status bar','Auto-launch Catalog'],apps:['Catalog'],dev:120,st:'ok'},
+ {n:'Office Phones',fam:'Android',v:'1.3',cfg:['Work profile','Passcode: 6 digits','Email: Exchange'],apps:['Microsoft Teams'],dev:205,st:'draft'},
+ {n:'Warehouse Scanners',fam:'Android',v:'3.1',cfg:['Kiosk: Single app','Scanner keyboard','Battery saver off'],apps:['Print Service'],dev:391,st:'ok'}];
+var RULES=[
+ {n:['Low battery warning','تنبيه البطارية المنخفضة'],w:['Battery below 15%','البطارية أقل من 15%'],t:['Send a message to the user','إرسال رسالة للمستخدم'],run:42},
+ {n:['Offline device follow-up','متابعة الأجهزة غير المتصلة'],w:['No check-in for 24 hours','لا اتصال لمدة 24 ساعة'],t:['Alert branch manager on WhatsApp','تنبيه مدير الفرع عبر واتساب'],run:12},
+ {n:['Leaves the depot after hours','الخروج من المستودع بعد الدوام'],w:['Outside geofence after 10 PM','خارج السياج بعد 10 مساءً'],t:['Lock the device','قفل الجهاز'],run:3},
+ {n:['Unapproved app installed','تثبيت تطبيق غير معتمد'],w:['App not in the approved list','تطبيق خارج القائمة المعتمدة'],t:['Remove app and log incident','إزالة التطبيق وتسجيل حادثة'],run:7},
+ {n:['Move new devices to branch','نقل الأجهزة الجديدة للفرع'],w:['Enrolled on Riyadh Wi-Fi','تسجيل عبر واي فاي الرياض'],t:['Move to group Riyadh / Field sales','نقل إلى مجموعة الرياض / المبيعات'],run:36}];
+var SCRIPTS=[
+ {n:['Restart printer service','إعادة تشغيل خدمة الطباعة'],c:'am force-stop com.acme.print\nam start com.acme.print/.Main',last:L('Today 09:40','اليوم 09:40'),ok:'18/18'},
+ {n:['Clear app cache · SalesApp','مسح ذاكرة SalesApp'],c:'pm clear-cache com.acme.sales',last:L('Yesterday','أمس'),ok:'240/241'},
+ {n:['Collect diagnostic logs','جمع سجلات التشخيص'],c:'logcat -d -t 2000 > /sdcard/diag.txt\nupload /sdcard/diag.txt',last:L('Oct 29','29 أكتوبر'),ok:'4/4'}];
+var GROUPS=[{n:'Acme Trading',d:1248,l:0},{n:'Saudi Arabia',d:1020,l:1},{n:'Jeddah HQ',d:412,l:2},{n:'Riyadh',d:298,l:2},{n:'Dammam',d:176,l:2},{n:'Makkah',d:134,l:2},{n:'UAE · Dubai',d:128,l:1},{n:'Kuwait City',d:100,l:1}];
+var CERTS=[['Device identity · Acme CA','1,248','Jun 2027','c-ok'],['Branch Wi-Fi (EAP-TLS)','1,020','Feb 2027','c-ok'],['VPN client','412','Dec 2026','c-warn'],['Exchange mail','205','Apr 2027','c-ok']];
+var FILES=[['Product catalog · Nov 2026.pdf','PDF','4.2 MB',L('Field Sales','المبيعات الميدانية'),'1,020'],['Price list · SAR.xlsx','Excel','380 KB',L('Field Sales','المبيعات الميدانية'),'412'],['Store screensaver.mp4','Video','22 MB',L('Store Kiosk','أكشاك المتاجر'),'120'],['Safety guide (Arabic).pdf','PDF','1.1 MB',L('All devices','كل الأجهزة'),'1,248']];
+
+V.profiles=function(){
+ var p=PROFILES[ST.pf]||PROFILES[0];
+ return head(L('Profiles','ملفات الإعداد'),L('Bundles of settings and apps, versioned and pushed to a group automatically','حزم إعدادات وتطبيقات بإصدارات، تُرسل تلقائياً للمجموعة'),'<button class="btn pri" data-msg="New profile created as a draft" data-msgar="تم إنشاء ملف إعداد جديد كمسودة">+ '+L('New profile','ملف جديد')+'</button>')
+ +'<div class="row" style="align-items:flex-start;gap:16px"><div class="card" style="flex:1 1 260px;padding:10px;display:flex;flex-direction:column;gap:4px">'
+ +PROFILES.map(function(x,i){return '<button class="opt" style="border:0;background:'+(i===ST.pf?'var(--tint)':'transparent')+'" data-pf="'+i+'"><span class="row nw" style="justify-content:space-between"><b class="ltr" style="text-align:start">'+x.n+'</b><span class="chip '+(x.st==='ok'?'c-ok':'c-off')+'">'+(x.st==='ok'?L('Live','مفعّل'):L('Draft','مسودة'))+'</span></span><span>v'+x.v+' · '+x.dev+' '+L('devices','جهاز')+'</span></button>'}).join('')+'</div>'
+ +'<div style="flex:999 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px"><div class="card pad"><div class="row" style="justify-content:space-between"><div><h2 style="margin:0;font-size:20px" class="ltr">'+p.n+'</h2><span class="sub">'+L('Version','الإصدار')+' '+p.v+' · '+p.fam+' · '+p.dev+' '+L('devices','جهاز')+'</span></div><div class="row"><button class="btn" data-msg="Compared v'+p.v+' with previous version: 2 settings changed" data-msgar="تمت المقارنة مع الإصدار السابق: تغيّر إعدادان">'+L('Compare versions','مقارنة الإصدارات')+'</button><button class="btn pri" data-msg="Testing on 5 pilot devices first, then all '+p.dev+'" data-msgar="تجربة على 5 أجهزة أولاً ثم على '+p.dev+' جهازاً">'+L('Staged rollout','نشر تدريجي')+'</button></div></div></div>'
+ +'<div class="g2" style="gap:16px"><div class="card pad"><h2>'+L('Settings','الإعدادات')+'</h2>'+p.cfg.map(function(c){return '<div class="row nw" style="padding:9px 0;border-bottom:1px solid var(--soft);font-size:14px"><span style="color:var(--ok)">✓</span><span class="ltr">'+c+'</span></div>'}).join('')+'<button class="btn sm" style="margin-top:12px" data-msg="Settings picker opens here" data-msgar="تفتح قائمة الإعدادات هنا">+ '+L('Add setting','إضافة إعداد')+'</button></div>'
+ +'<div class="card pad"><h2>'+L('Apps in this profile','تطبيقات هذا الملف')+'</h2>'+p.apps.map(function(a){return '<div class="row nw" style="padding:9px 0;border-bottom:1px solid var(--soft);font-size:14px"><span class="ic" style="width:28px;height:28px">'+a[0]+'</span><span class="ltr">'+a+'</span></div>'}).join('')+'<h2 style="margin-top:18px">'+L('Rollout','حالة النشر')+'</h2><div class="bar" style="flex:none;height:8px"><i style="width:'+(p.st==='ok'?97:0)+'%;background:#22B07D"></i></div><span class="sub" style="font-size:13px">'+(p.st==='ok'?L('97% installed · 3% pending check-in','97% مثبت · 3% بانتظار الاتصال'):L('Not deployed yet','لم يُنشر بعد'))+'</span></div></div></div></div>';
+};
+
+V.rules=function(){
+ return head(L('Automation','الأتمتة'),L('If this happens, CoreEra does that, automatically and around the clock','إذا حدث هذا، ينفّذ كور إيرا ذلك تلقائياً وعلى مدار الساعة'),'<button class="btn pri" data-newrule>+ '+L('New rule','قاعدة جديدة')+'</button>')
+ +(ST.ruleNew?'<div class="card pad" style="border-color:var(--blue)"><h2>'+L('New rule','قاعدة جديدة')+'</h2><div class="g3" style="gap:12px"><label class="field">'+L('When','عندما')+'<select><option>'+L('Battery below…','البطارية أقل من…')+'</option><option>'+L('Device offline for…','الجهاز غير متصل لمدة…')+'</option><option>'+L('Leaves a geofence','يخرج من سياج')+'</option><option>'+L('App installed','تثبيت تطبيق')+'</option><option>'+L('SIM card changed','تغيير الشريحة')+'</option></select></label><label class="field">'+L('For devices in','للأجهزة في')+'<select><option>'+L('All devices','كل الأجهزة')+'</option>'+Object.keys(BR).map(function(b){return '<option>'+bn(b)+'</option>'}).join('')+'</select></label><label class="field">'+L('Then','إذن')+'<select><option>'+L('Lock the device','قفل الجهاز')+'</option><option>'+L('Send a message','إرسال رسالة')+'</option><option>'+L('Alert on WhatsApp','تنبيه عبر واتساب')+'</option><option>'+L('Run a script','تشغيل سكربت')+'</option><option>'+L('Move to group','نقل إلى مجموعة')+'</option></select></label></div><div class="row" style="margin-top:14px"><button class="btn pri" data-saverule>'+L('Save rule','حفظ القاعدة')+'</button><button class="btn" data-newrule>'+L('Cancel','إلغاء')+'</button></div></div>':'')
+ +'<div style="display:flex;flex-direction:column;gap:12px">'+RULES.map(function(r,i){var on=ST.ron[i]!==false;return '<div class="card pad" style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;opacity:'+(on?1:.6)+'"><div style="flex:1 1 220px"><b>'+L(r.n[0],r.n[1])+'</b><div class="sub" style="font-size:12px">'+L('Ran','نُفّذت')+' '+r.run+' '+L('times this month','مرة هذا الشهر')+'</div></div><div class="row" style="flex:2 1 300px;min-width:0;gap:8px"><span class="chip c-info" style="padding:6px 12px">'+L('When','عندما')+': '+L(r.w[0],r.w[1])+'</span><span class="muted">→</span><span class="chip c-ok" style="padding:6px 12px">'+L(r.t[0],r.t[1])+'</span></div>'+tog(on,'data-ron="'+i+'"',r.n[0])+'</div>'}).join('')+'</div>';
+};
+
+V.scripts=function(){
+ return head(L('Scripts','السكربتات'),L('Run saved commands on one device or a whole group','تشغيل أوامر محفوظة على جهاز أو مجموعة كاملة'),'<button class="btn pri" data-msg="Script editor opens here" data-msgar="يفتح محرر السكربت هنا">+ '+L('New script','سكربت جديد')+'</button>')
+ +'<div class="g3">'+SCRIPTS.map(function(s,i){return '<div class="card pad" style="display:flex;flex-direction:column;gap:12px"><b>'+L(s.n[0],s.n[1])+'</b><pre class="ltr" style="margin:0;padding:12px;border-radius:10px;background:var(--navy);color:#9CC2FF;font:12px/1.6 ui-monospace,Consolas,monospace;white-space:pre-wrap;text-align:left">'+esc(s.c)+'</pre><div class="row" style="justify-content:space-between;font-size:13px"><span class="muted">'+L('Last run','آخر تشغيل')+': '+s.last+'</span><span class="chip c-ok">'+s.ok+' '+L('succeeded','نجح')+'</span></div><div class="row"><select class="btn sm" aria-label="'+L('Target','الهدف')+'"><option>'+L('Selected devices','الأجهزة المحددة')+'</option>'+Object.keys(BR).map(function(b){return '<option>'+bn(b)+'</option>'}).join('')+'</select><button class="btn sm pri" data-msg="Script sent · results will appear in a minute" data-msgar="تم إرسال السكربت · تظهر النتائج خلال دقيقة">'+L('Run now','تشغيل الآن')+'</button></div></div>'}).join('')+'</div>'
+ +'<div class="card pad"><span class="sub" style="font-size:13px">'+L('Every script run is recorded in the audit log with who ran it, on which devices, and the result.','يُسجَّل كل تشغيل في سجل التدقيق مع من نفّذه وعلى أي أجهزة والنتيجة.')+'</span></div>';
+};
+
+V.certs=function(){
+ return head(L('Certificates','الشهادات'),L('Device certificates for Wi-Fi, VPN and email, renewed automatically','شهادات الأجهزة للواي فاي والـ VPN والبريد، تُجدَّد تلقائياً'),'<button class="btn pri" data-msg="Certificate authority settings open here" data-msgar="تفتح إعدادات جهة الإصدار هنا">+ '+L('Add certificate','إضافة شهادة')+'</button>')
+ +'<div class="g4">'+[[L('Active','فعّالة'),'2,885','var(--ok)'],[L('Expiring in 60 days','تنتهي خلال 60 يوماً'),'412','var(--warn)'],[L('Auto-renewed this month','جُددت تلقائياً هذا الشهر'),'96','var(--ok)'],[L('Failed renewals','تجديد فاشل'),'0','var(--ok)']].map(function(k){return '<div class="card pad kpi"><span>'+k[0]+'</span><b class="ltr">'+k[1]+'</b><i style="color:'+k[2]+'">'+(k[2]==='var(--warn)'?L('Renewal scheduled','التجديد مجدول'):L('Healthy','سليم'))+'</i></div>'}).join('')+'</div>'
+ +'<div class="card tbl"><div style="min-width:640px"><div class="tr th" style="grid-template-columns:2fr 1fr 1fr 1fr"><span>'+L('Certificate','الشهادة')+'</span><span>'+L('Devices','الأجهزة')+'</span><span>'+L('Expires','تنتهي')+'</span><span>'+L('Status','الحالة')+'</span></div>'+CERTS.map(function(c){return '<div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr"><b style="font-weight:500" class="ltr">'+c[0]+'</b><span>'+c[1]+'</span><span>'+c[2]+'</span><span><span class="chip '+c[3]+'">'+(c[3]==='c-ok'?L('Valid','صالحة'):L('Renews soon','تجدد قريباً'))+'</span></span></div>'}).join('')+'</div></div>';
+};
+
+V.content=function(){
+ return head(L('Content','المحتوى'),L('Send documents, price lists and videos to devices, always up to date','أرسل المستندات وقوائم الأسعار والفيديو للأجهزة، محدثة دائماً'),'<button class="btn pri" data-msg="Upload a file to share with devices" data-msgar="ارفع ملفاً لمشاركته مع الأجهزة">+ '+L('Upload file','رفع ملف')+'</button>')
+ +'<div class="card tbl"><div style="min-width:720px"><div class="tr th" style="grid-template-columns:2fr .7fr .7fr 1.2fr .8fr auto"><span>'+L('File','الملف')+'</span><span>'+L('Type','النوع')+'</span><span>'+L('Size','الحجم')+'</span><span>'+L('Sent to','أُرسل إلى')+'</span><span>'+L('Devices','الأجهزة')+'</span><span></span></div>'
+ +FILES.map(function(f){return '<div class="tr" style="grid-template-columns:2fr .7fr .7fr 1.2fr .8fr auto"><span class="row nw"><span class="ic">'+ico('log',16)+'</span><b style="font-weight:500" class="ltr">'+f[0]+'</b></span><span>'+f[1]+'</span><span class="ltr">'+f[2]+'</span><span>'+f[3]+'</span><span>'+f[4]+'</span><button class="btn sm" data-msg="New version pushed · devices update on next check-in" data-msgar="تم نشر نسخة جديدة · تُحدَّث الأجهزة عند الاتصال">'+L('Update','تحديث')+'</button></div>'}).join('')+'</div></div>';
+};
+
+/* AI assistant */
+var AI_Q=[['Which devices have not checked in this week?','ما الأجهزة التي لم تتصل هذا الأسبوع؟','off'],['Why is Dammam compliance low?','لماذا الالتزام منخفض في الدمام؟','dam'],['Lock all devices that left the depot tonight','اقفل كل الأجهزة التي خرجت من المستودع الليلة','lock']];
+function aiAnswer(k){
+ if(k==='off')return [L('3 devices have not checked in for more than 24 hours: DM-0042 and DM-0063 in Dammam (both low battery), and DB-0077 in Dubai. Want me to send a reminder to their users?','3 أجهزة لم تتصل لأكثر من 24 ساعة: DM-0042 وDM-0063 في الدمام (بطارية منخفضة)، وDB-0077 في دبي. هل أرسل تذكيراً لمستخدميها؟'),[L('Send reminder','إرسال تذكير'),'Reminder sent to 3 users','تم إرسال التذكير لـ 3 مستخدمين'],[L('Show devices','عرض الأجهزة'),'go-off']];
+ if(k==='dam')return [L('Dammam is at 90%. 12 van handhelds are offline and 2 run an old SalesApp version. Most went offline after 6 PM, which matches drivers turning devices off at the end of shift.','الدمام عند 90%. 12 جهازاً من أجهزة البيع المتنقل غير متصلة و2 بإصدار قديم من SalesApp. معظمها انقطع بعد 6 مساءً، وهو وقت إطفاء السائقين للأجهزة.'),[L('Create a rule for this','أنشئ قاعدة لذلك'),'Rule created: remind drivers at 5:45 PM','تم إنشاء قاعدة: تذكير السائقين الساعة 5:45 مساءً'],[L('Open map','افتح الخريطة'),'go-map']];
+ return [L('2 devices left the Dammam depot after 10 PM: DM-0042 and DM-0063. Locking needs your confirmation.','جهازان خرجا من مستودع الدمام بعد 10 مساءً: DM-0042 وDM-0063. القفل يحتاج تأكيدك.'),[L('Confirm lock','تأكيد القفل'),'2 devices locked · saved to audit log','تم قفل جهازين · حُفظ في سجل التدقيق'],[L('Cancel','إلغاء'),'none']];
+}
+function renderAI(){
+ var msgs=ST.ai.map(function(m){if(m.u)return '<div style="align-self:flex-end;max-width:85%;padding:10px 13px;border-radius:14px;background:var(--blue);color:#fff;font-size:13px">'+esc(m.u)+'</div>';var a=aiAnswer(m.k);return '<div style="align-self:flex-start;max-width:92%;display:flex;flex-direction:column;gap:8px"><div style="padding:10px 13px;border-radius:14px;background:var(--soft);font-size:13px;line-height:1.6">'+a[0]+'</div><div class="row">'+a.slice(1).map(function(b){return '<button class="btn sm" data-aiact="'+esc(b[1])+'" data-aiar="'+esc(b[2]||'')+'">'+b[0]+'</button>'}).join('')+'</div></div>'}).join('');
+ $('#layer').innerHTML='<div class="ov" data-ovclose style="justify-content:flex-end;align-items:stretch;padding:0"><div role="dialog" aria-modal="true" aria-label="CoreEra AI" style="width:100%;max-width:440px;background:var(--card);color:var(--text);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)"><div class="row nw" style="justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)"><span class="row nw"><span class="ic" style="background:linear-gradient(135deg,#1D6FE0,#38C6F4);color:#fff">'+ico('bolt',16)+'</span><b>'+L('Ask CoreEra','اسأل كور إيرا')+'</b><span class="chip c-info">'+L('Preview','تجريبي')+'</span></span><button class="btn sm" data-aiclose aria-label="'+L('Close','إغلاق')+'">✕</button></div>'
+ +'<div style="flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px">'+(msgs||'<div class="sub" style="font-size:14px">'+L('Ask about your devices in Arabic or English. Actions always need your confirmation.','اسأل عن أجهزتك بالعربية أو الإنجليزية. أي إجراء يحتاج تأكيدك دائماً.')+'</div>')+'</div>'
+ +'<div style="padding:14px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">'+AI_Q.map(function(q){return '<button class="opt" style="padding:10px 12px" data-aiq="'+q[2]+'"><span style="font-size:13px;color:var(--text)">'+L(q[0],q[1])+'</span></button>'}).join('')+'</div></div></div>';
+}
+
+
+var ACTS=[[L('Remote support','الدعم عن بُعد'),['Remote control','Live view','Send message','Send script','Request check-in']],[L('Security','الأمان'),['Lock','Reset passcode','Clear passcode','Locate','Ring']],[L('Modes','الأوضاع'),['Enter kiosk mode','Exit kiosk mode','Enter admin mode']],[L('Lifecycle','دورة الحياة'),['Rename','Move to group','Reboot','Unenroll','Retire']]];
+var AR_ACT={'Remote control':'التحكم عن بُعد','Live view':'عرض مباشر','Send message':'إرسال رسالة','Send script':'إرسال سكربت','Request check-in':'طلب اتصال','Lock':'قفل','Reset passcode':'إعادة تعيين الرمز','Clear passcode':'إزالة الرمز','Locate':'تحديد الموقع','Ring':'رنين','Enter kiosk mode':'تفعيل وضع الكشك','Exit kiosk mode':'إيقاف وضع الكشك','Enter admin mode':'وضع المسؤول','Rename':'إعادة تسمية','Move to group':'نقل إلى مجموعة','Reboot':'إعادة تشغيل','Unenroll':'إلغاء التسجيل','Retire':'إخراج من الخدمة'};
+function actionMenu(d){
+ var fav=Object.keys(ST.fav).filter(function(k){return ST.fav[k]});
+ var row=function(a){var f=!!ST.fav[a];return '<div class="row nw" style="justify-content:space-between;gap:6px"><button class="opt" style="border:0;padding:8px 10px;flex:1;background:transparent" data-act="'+a+'" data-dev2="'+d[0]+'"><span style="font-size:13px;color:var(--text)">'+L(a,AR_ACT[a])+'</span></button><button class="mini" style="color:'+(f?'#E8A23A':'var(--slate)')+';font-size:16px" data-favt="'+a+'" aria-label="'+L('Favorite','مفضلة')+'" aria-pressed="'+f+'">'+(f?'★':'☆')+'</button></div>'};
+ return '<div class="card pad" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;border-color:var(--blue)">'+(fav.length?'<div><div class="gl" style="color:var(--slate);padding:0 10px 6px">★ '+L('Favorites','المفضلة')+'</div>'+fav.map(row).join('')+'</div>':'')+ACTS.map(function(g){return '<div><div class="gl" style="color:var(--slate);padding:0 10px 6px">'+g[0]+'</div>'+g[1].map(row).join('')+'</div>'}).join('')+'</div>';
+}
+
+/* ---------- wizard ---------- */
+function renderWizard(){
+ var s=ST.wiz;
+ var steps=[L('Company','الشركة'),L('First branch','أول فرع'),L('Android Enterprise','Android Enterprise'),L('First device','أول جهاز')];
+ var body='';
+ if(s===1)body='<h2 style="margin:0;font-size:22px">'+L('Tell us about your company','أخبرنا عن شركتك')+'</h2><label class="field">'+L('Company name','اسم الشركة')+'<input id="wcn" value="'+esc(ST.company)+'"></label><label class="field">'+L('Main country','الدولة الرئيسية')+'<select><option>'+L('Saudi Arabia','السعودية')+'</option><option>'+L('UAE','الإمارات')+'</option><option>'+L('Kuwait','الكويت')+'</option></select></label><label class="field">'+L('How many devices?','كم عدد الأجهزة؟')+'<select><option>1–50</option><option>51–500</option><option selected>500–2,000</option><option>2,000+</option></select></label>';
+ if(s===2)body='<h2 style="margin:0;font-size:22px">'+L('Create your first branch','أنشئ أول فرع')+'</h2><label class="field">'+L('Branch name','اسم الفرع')+'<input value="'+L('Jeddah HQ','جدة · المقر الرئيسي')+'"></label><label class="field">'+L('City','المدينة')+'<select><option>'+L('Jeddah','جدة')+'</option><option>'+L('Riyadh','الرياض')+'</option><option>'+L('Dammam','الدمام')+'</option></select></label><span class="sub">'+L('You can add more branches later or import them from Excel.','يمكنك إضافة فروع أخرى لاحقاً أو استيرادها من إكسل.')+'</span>';
+ if(s===3)body='<h2 style="margin:0;font-size:22px">'+L('Connect Android Enterprise','اربط Android Enterprise')+'</h2><p class="sub" style="margin:0">'+L("This links CoreEra to Google so you can manage Android devices and install apps from managed Google Play.",'يربط كور إيرا مع جوجل لإدارة أجهزة أندرويد وتثبيت التطبيقات من متجر Google Play المُدار.')+'</p>'+(ST.setup.google?'<div class="row" style="padding:16px;border-radius:12px;background:var(--okbg);color:var(--ok);font-weight:600">✓ '+L('Connected to Google · Acme Trading enterprise','تم الربط مع جوجل · مؤسسة Acme Trading')+'</div>':'<button class="btn" style="height:52px" data-wgoogle><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6a4.8 4.8 0 0 1-2 3.1v2.6h3.3c1.9-1.8 3.1-4.4 3.1-7.5z"/><path fill="#34A853" d="M12 22c2.8 0 5.1-.9 6.8-2.5l-3.3-2.6c-.9.6-2.1 1-3.5 1-2.7 0-5-1.8-5.8-4.3H2.8v2.7A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.2 13.6a6 6 0 0 1 0-3.8V7.1H2.8a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.9.5 4 1.5l3-3A10 10 0 0 0 2.8 7.1l3.4 2.7C7 7.8 9.3 6 12 6z"/></svg>'+L('Sign in with Google to connect','الربط عبر حساب جوجل')+'</button>');
+ if(s===4)body='<h2 style="margin:0;font-size:22px">'+L('Enroll your first device','سجّل أول جهاز')+'</h2><div class="row nw" style="gap:18px;align-items:flex-start"><div style="background:var(--navy);padding:10px;border-radius:16px">'+qrSvg(130)+'</div><div style="display:flex;flex-direction:column;gap:8px;font-size:14px"><span>1. '+L('Factory reset an Android device','أعد ضبط جهاز أندرويد')+'</span><span>2. '+L('Tap the welcome screen 6 times','اضغط شاشة الترحيب 6 مرات')+'</span><span>3. '+L('Scan this code','امسح هذا الرمز')+'</span>'+(ST.setup.device?'<span class="chip c-ok" style="align-self:flex-start;margin-top:6px">✓ '+L('Device JD-0414 enrolled','تم تسجيل الجهاز JD-0414')+'</span>':'<span class="row nw muted" style="font-size:13px;margin-top:6px"><span class="dot" style="margin:0;background:#E8A23A"></span>'+L('Waiting for device…','بانتظار الجهاز…')+'</span><button class="btn sm" style="align-self:flex-start" data-wsim>'+L('Simulate a device','محاكاة جهاز')+'</button>')+'</div></div>';
+ var canNext=!(s===3&&!ST.setup.google)&&!(s===4&&!ST.setup.device);
+ $('#layer').innerHTML='<div class="ov" data-ovclose><div class="wiz" role="dialog" aria-modal="true" aria-label="'+L('Setup','الإعداد')+'"><div class="wl"><div class="brand" style="padding:0 0 18px">'+LOGO+'<span>CoreEra <em>Control</em></span></div>'
+ +steps.map(function(t,i){var n=i+1,done=n<s||(n===4&&ST.setup.device);return '<div class="ws'+(n===s?' on':'')+(done?' done':'')+'"><span class="n">'+(done?'✓':n)+'</span>'+t+'</div>'}).join('')+'<span style="margin-top:auto;font-size:12px;color:#8DA1C0">'+L('About 15 minutes in total','حوالي 15 دقيقة إجمالاً')+'</span></div>'
+ +'<div class="wr"><div class="prog"><i style="width:'+(s*25)+'%"></i></div><span class="sub">'+L('Step','الخطوة')+' '+s+' / 4</span>'+body+'<div style="flex:1"></div><div class="row" style="justify-content:space-between"><button class="btn" data-wskip style="border:0">'+L('Finish later','أكمل لاحقاً')+'</button><div class="row">'+(s>1?'<button class="btn" data-wback>'+L('Back','رجوع')+'</button>':'')+'<button class="btn pri" data-wnext'+(canNext?'':' disabled style="opacity:.5;cursor:not-allowed"')+'>'+(s===4?L('Finish','إنهاء'):L('Continue','متابعة'))+'</button></div></div></div></div></div>';
+ var f=$('#layer [data-wnext]')||$('#layer input');if(f&&s===1)$('#wcn').focus();
+}
+
+/* ---------- command palette ---------- */
+var palIdx=0;
+function cmds(){
+ var c=[[L('Go to','انتقال'),ico('over',16),L('Overview','نظرة عامة'),'go:overview'],[L('Go to','انتقال'),ico('dev',16),L('Devices','الأجهزة'),'go:devices'],[L('Go to','انتقال'),ico('map',16),L('Branch map','خريطة الفروع'),'go:map'],[L('Go to','انتقال'),ico('pol',16),L('Policies','السياسات'),'go:policies'],[L('Go to','انتقال'),ico('add',16),L('Enroll devices','تسجيل الأجهزة'),'go:enroll'],[L('Go to','انتقال'),ico('apps',16),L('Apps','التطبيقات'),'go:apps'],[L('Go to','انتقال'),ico('rem',16),L('Remote support','الدعم عن بُعد'),'go:remote'],[L('Go to','انتقال'),ico('geo',16),L('Geofencing','السياج الجغرافي'),'go:geofence'],[L('Go to','انتقال'),ico('rep',16),L('Reports','التقارير'),'go:reports'], [L('Go to','انتقال'),ico('prof',16),L('Profiles','ملفات الإعداد'),'go:profiles'],[L('Go to','انتقال'),ico('bolt',16),L('Automation','الأتمتة'),'go:rules'],[L('Go to','انتقال'),ico('code',16),L('Scripts','السكربتات'),'go:scripts'],[L('Go to','انتقال'),ico('lock',16),L('Certificates','الشهادات'),'go:certs'],[L('Go to','انتقال'),ico('log',16),L('Content','المحتوى'),'go:content'],[L('Actions','إجراءات'),ico('bolt',16),L('Ask CoreEra AI','اسأل كور إيرا'),'ai'],[L('Go to','انتقال'),ico('users',16),L('Users and roles','المستخدمون والصلاحيات'),'go:users'],[L('Go to','انتقال'),ico('log',16),L('Audit log','سجل التدقيق'),'go:audit'],[L('Go to','انتقال'),ico('set',16),L('Settings','الإعدادات'),'go:settings'],
+ [L('Actions','إجراءات'),ico('bolt',16),L('Show offline devices','عرض الأجهزة غير المتصلة'),'off'],[L('Actions','إجراءات'),ico('bolt',16),L('Turn on kiosk mode for Store kiosks','تفعيل وضع الكشك لأجهزة المتاجر'),'kiosk'],[L('Actions','إجراءات'),ico('bolt',16),L('Switch language to Arabic / English','تغيير اللغة'),'lang'],[L('Actions','إجراءات'),ico('bolt',16),L('Toggle dark mode','تبديل الوضع الداكن'),'theme'],[L('Actions','إجراءات'),ico('bolt',16),L('Continue setup','أكمل الإعداد'),'wiz']];
+ DEV.forEach(function(d){c.push([L('Devices','الأجهزة'),ico('dev',16),L('Open ','فتح ')+d[0]+' · '+d[2],'dev:'+d[0],d[0]+' '+d[2]+' '+d[3]]);c.push([L('Devices','الأجهزة'),ico('pol',16),L('Lock ','قفل ')+d[0],'lock:'+d[0],d[0]+' lock قفل'])});
+ return c;
+}
+function renderPal(q){
+ q=(q||'').toLowerCase().trim();
+ var list=cmds().filter(function(c){return !q||(c[2]+' '+(c[4]||'')).toLowerCase().indexOf(q)>-1}).slice(0,12);
+ if(palIdx>=list.length)palIdx=0;
+ var g='',html='';list.forEach(function(c,i){if(c[0]!==g){g=c[0];html+='<li class="grp">'+g+'</li>'}html+='<li><button class="'+(i===palIdx?'act':'')+'" data-cmd="'+c[3]+'">'+c[1]+'<span>'+esc(c[2])+'</span>'+(i===palIdx?'<small class="ltr">Enter ↵</small>':'')+'</button></li>'});
+ $('#pall').innerHTML=html||'<li class="grp" style="text-transform:none">'+L('No results','لا توجد نتائج')+'</li>';
+ return list;
+}
+function openPal(){
+ palIdx=0;
+ $('#layer').innerHTML='<div class="ov" data-ovclose><div class="pal" role="dialog" aria-modal="true" aria-label="'+L('Command bar','شريط الأوامر')+'"><div class="in">'+ico('srch',20)+'<input id="palq" placeholder="'+L('Type a command or device… e.g. lock RY-0218','اكتب أمراً أو اسم جهاز… مثال: قفل RY-0218')+'" autocomplete="off" aria-label="'+L('Command','أمر')+'"><kbd class="muted ltr" style="font-size:12px">Esc</kbd></div><ul id="pall"></ul></div></div>';
+ renderPal('');var i=$('#palq');i.focus();
+ i.addEventListener('input',function(){palIdx=0;renderPal(i.value)});
+ i.addEventListener('keydown',function(e){var l=renderPal(i.value);if(e.key==='ArrowDown'){e.preventDefault();palIdx=(palIdx+1)%Math.max(l.length,1);renderPal(i.value)}else if(e.key==='ArrowUp'){e.preventDefault();palIdx=(palIdx-1+l.length)%Math.max(l.length,1);renderPal(i.value)}else if(e.key==='Enter'&&l[palIdx]){e.preventDefault();runCmd(l[palIdx][3])}});
+}
+function closeLayer(){$('#layer').innerHTML=''}
+function runCmd(c){
+ closeLayer();
+ var p=c.split(':');
+ if(p[0]==='go')return go(p[1]);
+ if(p[0]==='dev')return go('device',{dev:p[1],tab:'Overview'});
+ if(p[0]==='lock'){toast('Lock command sent to '+p[1],'تم إرسال أمر القفل إلى '+p[1]);return}
+ if(c==='off'){ST.f='Offline';ST.branch='';ST.q='';return go('devices')}
+ if(c==='kiosk'){ST.pol=1;ST.kiosk=true;go('policies');toast('Kiosk mode on for Store kiosks','تم تفعيل وضع الكشك لأجهزة المتاجر');return}
+ if(c==='lang')return setLang(LANG==='ar'?'en':'ar');
+ if(c==='theme')return setTheme();
+ if(c==='ai')return renderAI();
+ if(c==='wiz'){ST.wiz=ST.wiz||1;renderWizard()}
+}
+
+/* ---------- render / nav ---------- */
+function render(focus){
+ renderSide();
+ var y=window.scrollY;
+ $('#view').innerHTML=V[ST.view]();
+ if(focus){$('#view').focus({preventScroll:true});window.scrollTo(0,0)}else window.scrollTo(0,y);
+ $('#demo').textContent=L('Preview · sample data','نسخة تجريبية · بيانات تجريبية');
+}
+function go(v,extra){
+ if(v.indexOf('soon:')===0){ST.soon=v.slice(5);v='soon'}
+ ST.view=v;ST.amenu=false;if(v!=='devices')ST.sel={};if(extra)for(var k in extra)ST[k]=extra[k];render(true);
+ try{history.replaceState(null,'','#'+v)}catch(e){}
+}
+function setLang(l){LANG=l;try{localStorage.setItem('ce-lang',l)}catch(e){}document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';
+ if($('#app').classList.contains('hidden'))renderLogin();else{render(false);if(ST.wiz&&$('#layer .wiz'))renderWizard()}
+ $('#demo').textContent=L('Preview · sample data','نسخة تجريبية · بيانات تجريبية')}
+function setTheme(){THEME=THEME==='dark'?'light':'dark';try{localStorage.setItem('ce-theme',THEME)}catch(e){}if(THEME==='dark')document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');if(!$('#app').classList.contains('hidden'))render(false)}
+setInterval(function(){if(!ST.rs)return;ST.rsec++;var m=Math.floor(ST.rsec/60),x=ST.rsec%60;ST.rt=(m<10?'0':'')+m+':'+(x<10?'0':'')+x;var el=document.getElementById('rt');if(el)el.textContent=ST.rt},1000);
+function enter(){$('#login').classList.add('hidden');$('#app').classList.remove('hidden');go('overview');if(!setupDone()){ST.wiz=1;setTimeout(renderWizard,350)}}
+
+/* ---------- events ---------- */
+document.addEventListener('click',function(e){
+ var t=e.target;
+ if(t.closest('[data-lang]')){setLang(LANG==='ar'?'en':'ar');return}
+ if(t.closest('[data-themebtn]')){setTheme();return}
+ var x;
+ if(t.closest('[data-ai]')){renderAI();return}
+ if(t.closest('[data-aiclose]')){closeLayer();return}
+ if((x=t.closest('[data-aiq]'))){var q=AI_Q.filter(function(z){return z[2]===x.dataset.aiq})[0];ST.ai.push({u:L(q[0],q[1])});ST.ai.push({k:q[2]});renderAI();return}
+ if((x=t.closest('[data-aiact]'))){var a=x.dataset.aiact;if(a==='go-off'){closeLayer();ST.f='Offline';ST.grp='Acme Trading';go('devices');return}if(a==='go-map'){closeLayer();go('map');return}if(a==='none'){closeLayer();return}toast(a,x.dataset.aiar||a);return}
+ if((x=t.closest('[data-pf]'))){ST.pf=+x.dataset.pf;render(false);return}
+ if((x=t.closest('[data-ron]'))){var ri=+x.dataset.ron;ST.ron[ri]=ST.ron[ri]===false;render(false);return}
+ if(t.closest('[data-newrule]')){ST.ruleNew=!ST.ruleNew;render(false);return}
+ if(t.closest('[data-saverule]')){ST.ruleNew=false;RULES.push({n:['New rule','قاعدة جديدة'],w:['Battery below 15%','البطارية أقل من 15%'],t:['Lock the device','قفل الجهاز'],run:0});toast('Rule saved and active','تم حفظ القاعدة وتفعيلها');render(false);return}
+ if((x=t.closest('[data-grp]'))){ST.grp=x.dataset.grp;render(false);return}
+ if(t.closest('[data-amenu]')){ST.amenu=!ST.amenu;render(false);return}
+ if((x=t.closest('[data-favt]'))){var fa=x.dataset.favt;ST.fav[fa]=!ST.fav[fa];render(false);return}
+ if((x=t.closest('[data-act]'))){var an=x.dataset.act;ST.amenu=false;if(an==='Remote control'||an==='Live view'){ST.rdev=x.dataset.dev2;go('remote');return}toast(an+' sent to '+x.dataset.dev2,L(an,AR_ACT[an])+' · '+x.dataset.dev2);render(false);return}
+ if((x=t.closest('[data-atab]'))){ST.atab=x.dataset.atab;render(false);return}
+ if((x=t.closest('[data-amode]'))){var pr=x.dataset.amode.split(':');ST.amode[pr[0]]=pr[1];toast(pr[0]+' updated on all devices',' تم تحديث '+pr[0]+' على كل الأجهزة');render(false);return}
+ if((x=t.closest('[data-rdev]'))){if(ST.rs){toast('End the current session first','أنهِ الجلسة الحالية أولاً');return}ST.rdev=x.dataset.rdev;render(false);return}
+ if(t.closest('[data-rstart]')){toast('Waiting for the user to accept…','بانتظار موافقة المستخدم…');setTimeout(function(){ST.rs=true;ST.rsec=0;ST.rt='00:00';ST.chat.push(['them','I accepted. Can you see my screen?','وافقت. هل ترى شاشتي؟']);if(ST.view==='remote')render(false);toast('User accepted. You are now connected.','وافق المستخدم. أنت متصل الآن.')},1200);return}
+ if(t.closest('[data-rend]')){ST.rs=false;toast('Session ended and saved to the audit log','انتهت الجلسة وحُفظت في سجل التدقيق');render(false);return}
+ if((x=t.closest('[data-gz]'))){var gi=+x.dataset.gz;ST.gz[gi]=!ST.gz[gi];render(false);return}
+ if((x=t.closest('[data-lt]'))){ST.lt=x.dataset.lt;render(false);return}
+ if((x=t.closest('[data-stab]'))){ST.stab=x.dataset.stab;render(false);return}
+ if((x=t.closest('[data-sec]'))){ST.sec[x.dataset.sec]=!ST.sec[x.dataset.sec];render(false);return}
+ if((x=t.closest('[data-region]'))){ST.region=x.dataset.region;toast('Data region updated','تم تحديث منطقة البيانات');render(false);return}
+ if((x=t.closest('[data-int]'))){ST.ints[x.dataset.int]=true;toast(x.dataset.int+' connected',' تم ربط '+x.dataset.int);render(false);return}
+ if(t.closest('[data-enter]')){enter();return}
+ if(t.closest('[data-out]')){$('#app').classList.add('hidden');$('#login').classList.remove('hidden');renderLogin();return}
+ if(t.closest('[data-pal]')){openPal();return}
+ if(t.matches('[data-ovclose]')){if($('#layer .wiz')){ST.wiz=ST.wiz||1}closeLayer();return}
+ var c=t.closest('[data-cmd]');if(c){runCmd(c.dataset.cmd);return}
+ // wizard
+ if(t.closest('[data-wskip]')){closeLayer();render(false);toast('You can finish setup any time from Overview','يمكنك إكمال الإعداد في أي وقت من النظرة العامة');return}
+ if(t.closest('[data-wback]')){ST.wiz--;renderWizard();return}
+ if(t.closest('[data-wgoogle]')){ST.setup.google=true;renderWizard();return}
+ if(t.closest('[data-wsim]')){ST.setup.device=true;renderWizard();return}
+ if(t.closest('[data-wnext]')){var s=ST.wiz;if(s===1){var n=$('#wcn');if(n&&n.value.trim())ST.company=n.value.trim();ST.setup.company=true}if(s===2)ST.setup.branch=true;if(s===4){closeLayer();ST.wiz=0;render(false);toast('Setup complete. Your console is ready.','اكتمل الإعداد. لوحة التحكم جاهزة.');return}if(s===3&&!ST.setup.google)return;ST.wiz++;renderWizard();return}
+ if(t.closest('[data-wiz]')){ST.wiz=ST.setup.company?(ST.setup.branch?(ST.setup.google?4:3):2):1;renderWizard();return}
+ // selection
+ var sa=t.closest('[data-selall]');if(sa){var rows=filtered(),all=rows.every(function(d){return ST.sel[d[0]]});rows.forEach(function(d){if(all)delete ST.sel[d[0]];else ST.sel[d[0]]=1});render(false);return}
+ var sl=t.closest('[data-sel]');if(sl){var id=sl.dataset.sel;if(ST.sel[id])delete ST.sel[id];else ST.sel[id]=1;render(false);return}
+ var bk=t.closest('[data-bulk]');if(bk){var n=Object.keys(ST.sel).length,a=bk.dataset.bulk;if(a!=='clear'){var m={lock:['Lock sent to ','تم إرسال القفل إلى '],reboot:['Reboot sent to ','تم إرسال إعادة التشغيل إلى '],app:['SalesApp 4.2 pushed to ','تم تثبيت SalesApp 4.2 على ']}[a];toast(m[0]+n+' devices',m[1]+n+' أجهزة')}ST.sel={};render(false);return}
+ var el=t.closest('[data-go],[data-f],[data-dev],[data-branch],[data-tab],[data-msg],[data-pol],[data-kiosk],[data-mode],[data-rule],[data-save],[data-m],[data-fix],[data-clrbranch],[data-toastk]');
+ if(!el)return;
+ if(el.tagName==='A')e.preventDefault();
+ var d=el.dataset;
+ if(d.go){go(d.go);return}
+ if(d.dev){go('device',{dev:d.dev,tab:'Overview'});return}
+ if(d.branch){ST.branch=d.branch;ST.f='All';ST.q='';go('devices');return}
+ if(d.clrbranch!==undefined){ST.branch=''}
+ if(d.f){ST.f=d.f}
+ if(d.tab){ST.tab=d.tab}
+ if(d.msg){toast(d.msg,d.msgar)}
+ if(d.toastk){toast('Export started. You will get an email with the CSV.','بدأ التصدير. سيصلك بريد بالملف.')}
+ if(d.pol){ST.pol=+d.pol}
+ if(d.kiosk!==undefined){ST.kiosk=!ST.kiosk}
+ if(d.mode){ST.mode=d.mode}
+ if(d.rule){ST.rules[d.rule]=!ST.rules[d.rule]}
+ if(d.save!==undefined){var nm=['Van Sales · Standard','Store kiosks','Office phones','Warehouse scanners','Managers'][ST.pol],cnt=['412','120','205','391','38'][ST.pol];toast('Policy saved. Applying to '+cnt+' devices.','تم حفظ السياسة وتطبيقها على '+cnt+' جهازاً.')}
+ if(d.m){ST.m=d.m}
+ if(d.fix){var p=d.fix.split(':'),a=ALERTS[p[0]].a[+p[1]];if(a[2]==='map'){go('map');return}if(a[2]&&a[2].indexOf('dev:')===0){go('device',{dev:a[2].slice(4),tab:'Overview'});return}if(a[3]==='block')ST.blocked=true;toast(a[1][0],a[1][1]);ST.alerts=ST.alerts.filter(function(x){return x!==p[0]})}
+ render(false);
+});
+document.addEventListener('submit',function(e){var f=e.target.closest('[data-chat]');if(!f)return;e.preventDefault();var i=f.querySelector('input'),v=i.value.trim();if(!v)return;ST.chat.push(['me',v]);render(false);setTimeout(function(){ST.chat.push(['them','OK, thank you!','حسناً، شكراً!']);if(ST.view==='remote')render(false)},1100);var ni=$('[data-chat] input');if(ni)ni.focus()});
+document.addEventListener('change',function(e){if(e.target.matches('[data-bulkpol]')&&e.target.value){var n=Object.keys(ST.sel).length;toast(e.target.value+' applied to '+n+' devices',' تم تطبيق '+e.target.value+' على '+n+' أجهزة');ST.sel={};render(false)}});
+document.addEventListener('input',function(e){var k=e.target.matches('[data-aq]')?'aq':e.target.matches('[data-lq]')?'lq':null;if(k){ST[k]=e.target.value;var ps=e.target.selectionStart;render(false);var ii=$('[data-'+k+']');ii.focus();ii.setSelectionRange(ps,ps);return}
+ if(e.target.matches('[data-cname]')){ST.company=e.target.value;return}
+ if(e.target.matches('[data-q]')){ST.q=e.target.value;var pos=e.target.selectionStart;render(false);var i=$('[data-q]');i.focus();i.setSelectionRange(pos,pos)}});
+document.addEventListener('keydown',function(e){
+ if((e.ctrlKey||e.metaKey)&&(e.key==='k'||e.key==='K')&&!$('#app').classList.contains('hidden')){e.preventDefault();openPal();return}
+ if(e.key==='Escape'&&$('#layer').innerHTML){closeLayer();render(false);return}
+ var t=e.target;if(e.key==='Enter'&&t.dataset){if(t.dataset.dev&&!t.closest('[data-sel]')){go('device',{dev:t.dataset.dev,tab:'Overview'})}else if(t.dataset.branch){ST.branch=t.dataset.branch;ST.f='All';go('devices')}}
+});
+
+document.documentElement.lang=LANG;document.documentElement.dir=LANG==='ar'?'rtl':'ltr';if(THEME==='dark')document.documentElement.setAttribute('data-theme','dark');
+renderLogin();$('#demo').textContent=L('Preview · sample data','نسخة تجريبية · بيانات تجريبية');
+})();
+</script>
+</body>
+</html>
